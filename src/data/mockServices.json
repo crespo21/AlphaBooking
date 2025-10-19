@@ -1,0 +1,23 @@
+[
+  {
+    "id": "service-1",
+    "name": "Basic Haircut",
+    "description": "A classic haircut to keep you looking sharp",
+    "price": 60.00,
+    "duration": 30
+  },
+  {
+    "id": "service-2",
+    "name": "Premium Styling",
+    "description": "Complete styling with premium products",
+    "price": 135.00,
+    "duration": 60
+  },
+  {
+    "id": "service-3",
+    "name": "Beard Trim",
+    "description": "Keep your beard looking neat and tidy",
+    "price": 30.00,
+    "duration": 15
+  }
+]

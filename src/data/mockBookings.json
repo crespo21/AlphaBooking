@@ -1,0 +1,41 @@
+[
+  {
+    "id": "booking-1",
+    "confirmationNumber": "A1B2C3D4",
+    "serviceId": "service-1",
+    "staffId": "staff-1",
+    "date": "2023-11-20",
+    "time": "10:00",
+    "customerName": "Jamie Smith",
+    "customerEmail": "jamie.smith@example.com",
+    "customerPhone": "555-123-4567",
+    "totalPrice": 60.00,
+    "status": "confirmed"
+  },
+  {
+    "id": "booking-2",
+    "confirmationNumber": "E5F6G7H8",
+    "serviceId": "service-2",
+    "staffId": "staff-3",
+    "date": "2023-11-21",
+    "time": "13:30",
+    "customerName": "Casey Jones",
+    "customerEmail": "casey.jones@example.com",
+    "customerPhone": "555-987-6543",
+    "totalPrice": 135.00,
+    "status": "confirmed"
+  },
+  {
+    "id": "booking-3",
+    "confirmationNumber": "I9J0K1L2",
+    "serviceId": "service-3",
+    "staffId": "staff-2",
+    "date": "2023-11-22",
+    "time": "09:00",
+    "customerName": "Riley Wilson",
+    "customerEmail": "riley.wilson@example.com",
+    "customerPhone": "555-456-7890",
+    "totalPrice": 30.00,
+    "status": "cancelled"
+  }
+]
