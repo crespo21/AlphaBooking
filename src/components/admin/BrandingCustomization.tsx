@@ -184,7 +184,7 @@ export const BrandingCustomization: React.FC = () => {
                 <div className="border border-gray-200 rounded p-3 bg-white mb-2">
                   <div className="flex justify-between items-center">
                     <span>Haircut & Styling</span>
-                    <span className="font-medium">$50.00</span>
+                    <span className="font-medium">R250.00</span>
                   </div>
                 </div>
               </div>
@@ -236,7 +236,7 @@ export const BrandingCustomization: React.FC = () => {
                         <div className="ml-2">
                           <p className="text-sm font-medium">{staff.name}</p>
                           <p className="text-xs text-gray-500">
-                            {staff.priceSurcharge > 0 ? `+$${staff.priceSurcharge.toFixed(2)}` : 'No additional charge'}
+                          {staff.priceSurcharge > 0 ? `+R${staff.priceSurcharge.toFixed(2)}` : 'No additional charge'}
                           </p>
                         </div>
                       </div>

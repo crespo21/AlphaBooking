@@ -6,8 +6,8 @@ export const SystemSettings: React.FC = () => {
   const [reminderTime, setReminderTime] = useState('24');
   const [paymentGateway, setPaymentGateway] = useState('stripe');
   const [cancellationPolicy, setCancellationPolicy] = useState('24');
-  const [currency, setCurrency] = useState('USD');
-  const [timezone, setTimezone] = useState('America/New_York');
+  const [currency, setCurrency] = useState('ZAR');
+  const [timezone, setTimezone] = useState('Africa/Johannesburg');
   const handleSaveSettings = () => {
     // In a real app, this would make an API call
     alert('Settings saved successfully!');
@@ -60,6 +60,7 @@ export const SystemSettings: React.FC = () => {
               Currency
             </label>
             <select id="currency" value={currency} onChange={e => setCurrency(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
+              <option value="ZAR">ZAR - South African Rand</option>
               <option value="USD">USD - US Dollar</option>
               <option value="EUR">EUR - Euro</option>
               <option value="GBP">GBP - British Pound</option>
@@ -89,6 +90,7 @@ export const SystemSettings: React.FC = () => {
               Business Timezone
             </label>
             <select id="timezone" value={timezone} onChange={e => setTimezone(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
+              <option value="Africa/Johannesburg">South Africa (SAST)</option>
               <option value="America/New_York">Eastern Time (ET)</option>
               <option value="America/Chicago">Central Time (CT)</option>
               <option value="America/Denver">Mountain Time (MT)</option>

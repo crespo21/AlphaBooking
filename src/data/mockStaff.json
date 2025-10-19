@@ -5,7 +5,7 @@
     "photo": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80",
     "bio": "Specializes in modern haircuts with 5+ years of experience",
     "services": ["service-1", "service-2"],
-    "priceSurcharge": 10.00
+    "priceSurcharge": 40.00
   },
   {
     "id": "staff-2",
@@ -13,7 +13,7 @@
     "photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80",
     "bio": "Beard grooming specialist with attention to detail",
     "services": ["service-1", "service-3"],
-    "priceSurcharge": 5.00
+    "priceSurcharge": 20.00
   },
   {
     "id": "staff-3",
@@ -21,6 +21,6 @@
     "photo": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80",
     "bio": "Creative stylist specializing in color and premium treatments",
     "services": ["service-1", "service-2", "service-3"],
-    "priceSurcharge": 15.00
+    "priceSurcharge": 60.00
   }
 ]

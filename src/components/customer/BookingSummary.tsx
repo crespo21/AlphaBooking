@@ -17,7 +17,7 @@ export const BookingSummary: React.FC = () => {
             {selectedService.duration} minutes
           </p>
           <p className="font-semibold mt-1">
-            ${selectedService.price.toFixed(2)}
+            R{selectedService.price.toFixed(2)}
           </p>
         </div> : <div className="mb-4 pb-4 border-b border-gray-200">
           <p className="text-gray-400 italic">No service selected</p>
@@ -37,12 +37,12 @@ export const BookingSummary: React.FC = () => {
             <p className="text-sm">{selectedStaff.name}</p>
           </div>
           {selectedStaff.priceSurcharge > 0 && <p className="text-sm text-gray-500 mt-1">
-              +${selectedStaff.priceSurcharge.toFixed(2)} surcharge
+              +R{selectedStaff.priceSurcharge.toFixed(2)} surcharge
             </p>}
         </div>}
       <div className="flex justify-between items-center font-semibold">
         <span>Total</span>
-        <span>${totalPrice.toFixed(2)}</span>
+        <span>R{totalPrice.toFixed(2)}</span>
       </div>
     </div>;
 };

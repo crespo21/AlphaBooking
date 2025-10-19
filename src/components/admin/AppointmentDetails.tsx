@@ -30,7 +30,7 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
   };
   const handleProcessRefund = () => {
     // In a real app, this would call an API to process the refund
-    alert(`Refund of $${refundAmount} processed successfully!`);
+    alert(`Refund of R${refundAmount} processed successfully!`);
     onClose();
   };
   return <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -71,11 +71,11 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                   Refund Amount
                 </label>
                 <div className="flex items-center">
-                  <span className="text-gray-500 mr-2">$</span>
+                  <span className="text-gray-500 mr-2">R</span>
                   <input type="number" value={refundAmount} onChange={e => setRefundAmount(Number(e.target.value))} max={booking.totalPrice} min={0} step={0.01} className="w-full p-2 border border-gray-300 rounded-md" />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Maximum refund: ${booking.totalPrice.toFixed(2)}
+                  Maximum refund: R{booking.totalPrice.toFixed(2)}
                 </p>
               </div>
               <div className="flex justify-end space-x-2">
@@ -135,7 +135,7 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                     <div>
                       <p className="text-sm text-gray-500">Total Price</p>
                       <p className="font-medium">
-                        ${booking.totalPrice.toFixed(2)}
+                        R{booking.totalPrice.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -154,7 +154,7 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                         {service.description}
                       </p>
                       <div className="flex justify-between text-sm">
-                        <span>${service.price.toFixed(2)}</span>
+                        <span>R{service.price.toFixed(2)}</span>
                         <span>{service.duration} minutes</span>
                       </div>
                     </div> : <p className="text-gray-500">Service not found</p>}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboardIcon, ScissorsIcon, UsersIcon, CalendarIcon, PaletteIcon, MenuIcon, XIcon, SettingsIcon, BarChart2Icon } from 'lucide-react';
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -8,6 +8,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   children
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigationItems = [{
     path: '/admin',

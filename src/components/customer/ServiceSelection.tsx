@@ -13,7 +13,7 @@ export const ServiceSelection: React.FC = () => {
             <h3 className="text-lg font-medium">{service.name}</h3>
             <p className="text-gray-600 mt-1 text-sm">{service.description}</p>
             <div className="flex justify-between mt-4">
-              <span className="font-semibold">${service.price.toFixed(2)}</span>
+              <span className="font-semibold">R{service.price.toFixed(2)}</span>
               <span className="text-gray-500">{service.duration} mins</span>
             </div>
           </div>)}

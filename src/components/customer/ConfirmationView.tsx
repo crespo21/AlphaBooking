@@ -58,7 +58,7 @@ export const ConfirmationView: React.FC<ConfirmationViewProps> = ({
             </div>}
           <div className="flex justify-between pt-4 border-t border-gray-200">
             <span className="text-gray-800 font-medium">Total:</span>
-            <span className="font-bold">${totalPrice.toFixed(2)}</span>
+            <span className="font-bold">R{totalPrice.toFixed(2)}</span>
           </div>
         </div>
       </div>

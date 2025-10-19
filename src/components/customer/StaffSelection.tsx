@@ -31,7 +31,7 @@ export const StaffSelection: React.FC = () => {
               <div>
                 <h3 className="text-lg font-medium">{staff.name}</h3>
                 {staff.priceSurcharge > 0 && <p className="text-sm text-gray-500">
-                    +${staff.priceSurcharge.toFixed(2)} surcharge
+                    +R{staff.priceSurcharge.toFixed(2)} surcharge
                   </p>}
               </div>
             </div>
