@@ -1,23 +1,15 @@
-import React, { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon } from 'lucide-react';
-import mockStaff from '../../data/mockStaff.json';
-import mockServices from '../../data/mockServices.json';
-interface Staff {
-  id: string;
-  name: string;
-  photo: string;
-  bio: string;
-  services: string[];
-  priceSurcharge: number;
-}
-interface Service {
-  id: string;
-  name: string;
-}
+import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { createStaff, deleteStaff, getServices, getStaff, updateStaff } from '../../lib/database';
+import { Service, Staff } from '../../lib/supabase';
+
 export const StaffManagement: React.FC = () => {
-  const [staff, setStaff] = useState<Staff[]>(mockStaff);
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentStaff, setCurrentStaff] = useState<Staff | null>(null);
+
   const initialFormState = {
     name: '',
     photo: '',
@@ -26,6 +18,26 @@ export const StaffManagement: React.FC = () => {
     priceSurcharge: '0'
   };
   const [formData, setFormData] = useState(initialFormState);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [staffData, servicesData] = await Promise.all([
+        getStaff(),
+        getServices()
+      ]);
+      setStaff(staffData);
+      setServices(servicesData);
+    } catch (error) {
+      console.error('Error loading staff data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const {
       name,
@@ -57,42 +69,63 @@ export const StaffManagement: React.FC = () => {
       photo: staffMember.photo,
       bio: staffMember.bio,
       services: staffMember.services,
-      priceSurcharge: staffMember.priceSurcharge.toString()
+      priceSurcharge: staffMember.price_surcharge.toString()
     });
   };
-  const handleDeleteClick = (staffId: string) => {
-    // In a real app, this would make an API call
-    setStaff(staff.filter(staffMember => staffMember.id !== staffId));
+
+  const handleDeleteClick = async (staffId: string) => {
+    if (!confirm('Are you sure you want to delete this staff member?')) return;
+    
+    try {
+      await deleteStaff(staffId);
+      setStaff(staff.filter(staffMember => staffMember.id !== staffId));
+    } catch (error) {
+      console.error('Error deleting staff:', error);
+      alert('Failed to delete staff member');
+    }
   };
+
   const handleAddNewClick = () => {
     setIsEditing(false);
     setCurrentStaff(null);
     setFormData(initialFormState);
   };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newStaffMember = {
-      id: currentStaff ? currentStaff.id : `staff-${Date.now()}`,
+
+    const staffData = {
       name: formData.name,
       photo: formData.photo || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
       bio: formData.bio,
       services: formData.services,
-      priceSurcharge: parseFloat(formData.priceSurcharge)
+      price_surcharge: parseFloat(formData.priceSurcharge),
+      is_active: true
     };
-    if (isEditing && currentStaff) {
-      // Update existing staff member
-      setStaff(staff.map(staffMember => staffMember.id === currentStaff.id ? newStaffMember : staffMember));
-    } else {
-      // Add new staff member
-      setStaff([...staff, newStaffMember]);
+
+    try {
+      if (isEditing && currentStaff) {
+        // Update existing staff member
+        const updated = await updateStaff(currentStaff.id, staffData);
+        setStaff(staff.map(staffMember => staffMember.id === currentStaff.id ? updated : staffMember));
+      } else {
+        // Add new staff member
+        const newStaff = await createStaff(staffData);
+        setStaff([...staff, newStaff]);
+      }
+
+      // Reset form
+      setFormData(initialFormState);
+      setIsEditing(false);
+      setCurrentStaff(null);
+    } catch (error) {
+      console.error('Error saving staff:', error);
+      alert('Failed to save staff member');
     }
-    // Reset form
-    setFormData(initialFormState);
-    setIsEditing(false);
-    setCurrentStaff(null);
   };
+
   const getServiceNameById = (serviceId: string): string => {
-    const service = mockServices.find(s => s.id === serviceId);
+    const service = services.find(s => s.id === serviceId);
     return service ? service.name : 'Unknown Service';
   };
   return <div className="w-full">
@@ -107,13 +140,21 @@ export const StaffManagement: React.FC = () => {
         <div className="lg:col-span-2">
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-              {staff.map(staffMember => <div key={staffMember.id} className="border border-gray-200 rounded-lg p-4">
+              {loading ? (
+                <div className="col-span-full text-center py-8 text-gray-500">
+                  Loading staff...
+                </div>
+              ) : staff.length === 0 ? (
+                <div className="col-span-full text-center py-8 text-gray-500">
+                  No staff members found. Add your first staff member!
+                </div>
+              ) : staff.map(staffMember => <div key={staffMember.id} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center mb-3">
                     <img src={staffMember.photo} alt={staffMember.name} className="w-12 h-12 rounded-full object-cover mr-3" />
                     <div>
                       <h3 className="font-medium">{staffMember.name}</h3>
-                      {staffMember.priceSurcharge > 0 && <p className="text-xs text-gray-500">
-                          +${staffMember.priceSurcharge.toFixed(2)} surcharge
+                      {staffMember.price_surcharge > 0 && <p className="text-xs text-gray-500">
+                          +R{staffMember.price_surcharge.toFixed(2)} surcharge
                         </p>}
                     </div>
                   </div>
@@ -180,7 +221,9 @@ export const StaffManagement: React.FC = () => {
                   Services
                 </label>
                 <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2">
-                  {mockServices.map(service => <div key={service.id} className="flex items-center">
+                  {services.length === 0 ? (
+                    <p className="text-sm text-gray-500">No services available</p>
+                  ) : services.map(service => <div key={service.id} className="flex items-center">
                       <input type="checkbox" id={`service-${service.id}`} checked={formData.services.includes(service.id)} onChange={() => handleServiceChange(service.id)} className="mr-2" />
                       <label htmlFor={`service-${service.id}`} className="text-sm">
                         {service.name}

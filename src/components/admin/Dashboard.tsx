@@ -1,11 +1,39 @@
-import React from 'react';
+import { BarChart2Icon, CalendarCheckIcon, CalendarIcon, ClockIcon, SettingsIcon, UsersIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CalendarIcon, UsersIcon, ClockIcon, CalendarCheckIcon, PaletteIcon, SettingsIcon, BarChart2Icon } from 'lucide-react';
-import mockBookings from '../../data/mockBookings.json';
+import { getBookings, getServices, getStaff } from '../../lib/database';
+import { Booking, Service, Staff } from '../../lib/supabase';
+import { RealtimeDashboard } from './RealtimeDashboard';
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  // Count confirmed bookings
-  const confirmedBookingsCount = mockBookings.filter(booking => booking.status === 'confirmed').length;
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [bookingsData, servicesData, staffData] = await Promise.all([
+          getBookings(),
+          getServices(),
+          getStaff()
+        ]);
+        setBookings(bookingsData);
+        setServices(servicesData);
+        setStaff(staffData);
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  const confirmedBookingsCount = bookings.filter(booking => booking.status === 'confirmed').length;
+  const recentBookings = bookings.slice(0, 5);
   return <div className="w-full">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
       <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
@@ -19,6 +47,9 @@ export const Dashboard: React.FC = () => {
           Database: Connected | Services: Running
         </p>
       </div>
+
+      {/* Real-time Dashboard */}
+      <RealtimeDashboard className="mb-8" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="flex items-center mb-2">
@@ -33,7 +64,7 @@ export const Dashboard: React.FC = () => {
             <UsersIcon className="w-5 h-5 text-purple-500 mr-2" />
             <h3 className="font-medium">Staff Members</h3>
           </div>
-          <p className="text-2xl font-bold">3</p>
+          <p className="text-2xl font-bold">{loading ? '...' : staff.length}</p>
           <p className="text-sm text-gray-500">Active staff</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -41,7 +72,7 @@ export const Dashboard: React.FC = () => {
             <CalendarIcon className="w-5 h-5 text-green-500 mr-2" />
             <h3 className="font-medium">Services</h3>
           </div>
-          <p className="text-2xl font-bold">4</p>
+          <p className="text-2xl font-bold">{loading ? '...' : services.length}</p>
           <p className="text-sm text-gray-500">Available services</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -82,26 +113,46 @@ export const Dashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {mockBookings.map(booking => <tr key={booking.id} className="border-t border-gray-200">
-                  <td className="py-3 px-4">{booking.confirmationNumber}</td>
-                  <td className="py-3 px-4">{booking.customerName}</td>
-                  <td className="py-3 px-4">
-                    {
-                // Find the service name using the serviceId
-                (() => {
-                  const service = require('../../data/mockServices.json').find((s: any) => s.id === booking.serviceId);
-                  return service ? service.name : 'Unknown Service';
-                })()}
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-gray-500">
+                    Loading bookings...
                   </td>
-                  <td className="py-3 px-4">
-                    {booking.date} at {booking.time}
+                </tr>
+              ) : recentBookings.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-gray-500">
+                    No bookings found
                   </td>
-                  <td className="py-3 px-4">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                    </span>
-                  </td>
-                </tr>)}
+                </tr>
+              ) : (
+                recentBookings.map(booking => {
+                  const service = services.find(s => s.id === booking.service_id);
+                  return (
+                    <tr key={booking.id} className="border-t border-gray-200">
+                      <td className="py-3 px-4">{booking.confirmation_number}</td>
+                      <td className="py-3 px-4">{booking.customer_name}</td>
+                      <td className="py-3 px-4">
+                        {service ? service.name : 'Unknown Service'}
+                      </td>
+                      <td className="py-3 px-4">
+                        {booking.date} at {booking.time}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                          booking.status === 'confirmed' 
+                            ? 'bg-green-100 text-green-800' 
+                            : booking.status === 'cancelled'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

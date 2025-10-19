@@ -1,38 +1,52 @@
-import React, { useState } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, CheckIcon, XIcon, UserPlusIcon, EyeIcon, BanIcon } from 'lucide-react';
-import mockBookings from '../../data/mockBookings.json';
-import mockServices from '../../data/mockServices.json';
-import mockStaff from '../../data/mockStaff.json';
 import { format } from 'date-fns';
+import { BanIcon, Calendar, ChevronLeft, ChevronRight, EyeIcon, UserPlusIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { getBookings, getServices, getStaff } from '../../lib/database';
+import { Booking, Service, Staff } from '../../lib/supabase';
 import { AppointmentDetails } from './AppointmentDetails';
-interface Booking {
-  id: string;
-  confirmationNumber: string;
-  serviceId: string;
-  staffId: string;
-  date: string;
-  time: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  totalPrice: number;
-  status: string;
-}
+
 export const AppointmentsList: React.FC = () => {
-  const [bookings, setBookings] = useState<Booking[]>(mockBookings);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [bookingsData, servicesData, staffData] = await Promise.all([
+          getBookings(),
+          getServices(),
+          getStaff()
+        ]);
+        setBookings(bookingsData);
+        setServices(servicesData);
+        setStaff(staffData);
+      } catch (error) {
+        console.error('Error loading appointments data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
   // Get service name from service ID
   const getServiceName = (serviceId: string) => {
-    const service = mockServices.find(service => service.id === serviceId);
+    const service = services.find(service => service.id === serviceId);
     return service ? service.name : 'Unknown Service';
   };
+
   // Get staff name from staff ID
-  const getStaffName = (staffId: string) => {
-    const staff = mockStaff.find(staff => staff.id === staffId);
-    return staff ? staff.name : 'Any Staff';
+  const getStaffName = (staffId: string | null) => {
+    if (!staffId) return 'Any Staff';
+    const staffMember = staff.find(s => s.id === staffId);
+    return staffMember ? staffMember.name : 'Any Staff';
   };
   const filteredBookings = bookings.filter(booking => {
     if (filter === 'all') return true;
@@ -122,7 +136,13 @@ export const AppointmentsList: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredBookings.length > 0 ? filteredBookings.map(booking => <tr key={booking.id}>
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-4 text-center text-sm text-gray-500">
+                    Loading appointments...
+                  </td>
+                </tr>
+              ) : filteredBookings.length > 0 ? filteredBookings.map(booking => <tr key={booking.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {booking.date}
@@ -133,33 +153,33 @@ export const AppointmentsList: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        {booking.customerName}
+                        {booking.customer_name}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {booking.customerEmail}
+                        {booking.customer_email}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {booking.customerPhone}
+                        {booking.customer_phone}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {getServiceName(booking.serviceId)}
+                        {getServiceName(booking.service_id)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="text-sm text-gray-900">
-                          {booking.staffId === 'any' ? <span className="text-amber-600 flex items-center">
+                          {!booking.staff_id ? <span className="text-amber-600 flex items-center">
                               <UserPlusIcon className="w-4 h-4 mr-1" />
                               Needs Assignment
-                            </span> : getStaffName(booking.staffId)}
+                            </span> : getStaffName(booking.staff_id)}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        R{booking.totalPrice.toFixed(2)}
+                        R{booking.total_price.toFixed(2)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -191,6 +211,6 @@ export const AppointmentsList: React.FC = () => {
           </table>
         </div>
       </div>
-      {showDetails && selectedBooking && <AppointmentDetails booking={selectedBooking} onClose={() => setShowDetails(false)} onCancel={handleCancelBooking} onAssignStaff={handleAssignStaff} />}
+      {showDetails && selectedBooking && <AppointmentDetails booking={selectedBooking} services={services} staff={staff} onClose={() => setShowDetails(false)} onCancel={handleCancelBooking} onAssignStaff={handleAssignStaff} />}
     </div>;
 };

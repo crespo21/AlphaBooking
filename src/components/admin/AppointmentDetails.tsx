@@ -1,25 +1,29 @@
+import { CalendarIcon, CheckIcon, ClockIcon, CreditCardIcon, DollarSignIcon, UserIcon, XIcon } from 'lucide-react';
 import React, { useState } from 'react';
-import { XIcon, CheckIcon, UserIcon, CreditCardIcon, CalendarIcon, ClockIcon, DollarSignIcon } from 'lucide-react';
-import mockServices from '../../data/mockServices.json';
-import mockStaff from '../../data/mockStaff.json';
+import { Service, Staff } from '../../lib/supabase';
+
 interface AppointmentDetailsProps {
   booking: any;
+  services: Service[];
+  staff: Staff[];
   onClose: () => void;
   onCancel: (id: string) => void;
   onAssignStaff: (bookingId: string, staffId: string) => void;
 }
 export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
   booking,
+  services,
+  staff: staffList,
   onClose,
   onCancel,
   onAssignStaff
 }) => {
-  const [selectedStaff, setSelectedStaff] = useState(booking.staffId);
+  const [selectedStaff, setSelectedStaff] = useState(booking.staff_id);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showRefundOptions, setShowRefundOptions] = useState(false);
-  const [refundAmount, setRefundAmount] = useState(booking.totalPrice);
-  const service = mockServices.find(s => s.id === booking.serviceId);
-  const staff = mockStaff.find(s => s.id === booking.staffId);
+  const [refundAmount, setRefundAmount] = useState(booking.total_price);
+  const service = services.find(s => s.id === booking.service_id);
+  const staff = staffList.find(s => s.id === booking.staff_id);
   const handleAssignStaff = () => {
     onAssignStaff(booking.id, selectedStaff);
   };
@@ -72,10 +76,10 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                 </label>
                 <div className="flex items-center">
                   <span className="text-gray-500 mr-2">R</span>
-                  <input type="number" value={refundAmount} onChange={e => setRefundAmount(Number(e.target.value))} max={booking.totalPrice} min={0} step={0.01} className="w-full p-2 border border-gray-300 rounded-md" />
+                  <input type="number" value={refundAmount} onChange={e => setRefundAmount(Number(e.target.value))} max={booking.total_price} min={0} step={0.01} className="w-full p-2 border border-gray-300 rounded-md" />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Maximum refund: R{booking.totalPrice.toFixed(2)}
+                  Maximum refund: R{booking.total_price.toFixed(2)}
                 </p>
               </div>
               <div className="flex justify-end space-x-2">
@@ -100,12 +104,12 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                   <div className="flex items-start mb-2">
                     <UserIcon className="w-5 h-5 text-gray-400 mr-2 mt-0.5" />
                     <div>
-                      <p className="font-medium">{booking.customerName}</p>
+                      <p className="font-medium">{booking.customer_name}</p>
                       <p className="text-sm text-gray-500">
-                        {booking.customerEmail}
+                        {booking.customer_email}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {booking.customerPhone}
+                        {booking.customer_phone}
                       </p>
                     </div>
                   </div>
@@ -135,7 +139,7 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                     <div>
                       <p className="text-sm text-gray-500">Total Price</p>
                       <p className="font-medium">
-                        R{booking.totalPrice.toFixed(2)}
+                        R{booking.total_price.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -162,10 +166,10 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
               </div>
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {booking.staffId === 'any' ? 'Assign Staff Member' : 'Staff Member'}
+                  {!booking.staff_id ? 'Assign Staff Member' : 'Staff Member'}
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  {booking.staffId === 'any' || !staff ? <div>
+                  {!booking.staff_id || !staff ? <div>
                       <p className="text-gray-500 mb-2">
                         No specific staff member requested
                       </p>
@@ -176,8 +180,8 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                         <div className="flex items-center">
                           <select value={selectedStaff} onChange={e => setSelectedStaff(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md mr-2">
                             <option value="">Select a staff member</option>
-                            {mockStaff.map(staff => <option key={staff.id} value={staff.id}>
-                                {staff.name}
+                            {staffList.map(staffMember => <option key={staffMember.id} value={staffMember.id}>
+                                {staffMember.name}
                               </option>)}
                           </select>
                           <button onClick={handleAssignStaff} disabled={!selectedStaff} className={`p-2 rounded-md ${selectedStaff ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
@@ -208,7 +212,7 @@ export const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
                           Paid
                         </span>
                         <span className="text-sm text-gray-500">
-                          {booking.confirmationNumber}
+                          {booking.confirmation_number}
                         </span>
                       </div>
                     </div>

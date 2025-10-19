@@ -30,8 +30,8 @@ export const StaffSelection: React.FC = () => {
               <img src={staff.photo} alt={staff.name} className="w-12 h-12 rounded-full object-cover mr-4" />
               <div>
                 <h3 className="text-lg font-medium">{staff.name}</h3>
-                {staff.priceSurcharge > 0 && <p className="text-sm text-gray-500">
-                    +R{staff.priceSurcharge.toFixed(2)} surcharge
+                {staff.price_surcharge > 0 && <p className="text-sm text-gray-500">
+                    +R{staff.price_surcharge.toFixed(2)} surcharge
                   </p>}
               </div>
             </div>

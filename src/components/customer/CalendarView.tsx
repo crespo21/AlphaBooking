@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
+import { addDays, addMonths, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, startOfMonth, startOfWeek, subMonths } from 'date-fns';
+import React, { useEffect, useState } from 'react';
 import { useBooking } from '../../context/BookingContext';
 export const CalendarView: React.FC = () => {
   const {
@@ -8,8 +8,38 @@ export const CalendarView: React.FC = () => {
     isDateAvailable
   } = useBooking();
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
+  
+  // Load available dates for the current month
+  useEffect(() => {
+    const loadAvailableDates = async () => {
+      const monthStart = startOfMonth(currentMonth);
+      const monthEnd = endOfMonth(monthStart);
+      const startDate = startOfWeek(monthStart);
+      const endDate = endOfWeek(monthEnd);
+      
+      const available = new Set<string>();
+      let day = startDate;
+      
+      while (day <= endDate) {
+        if (isSameMonth(day, monthStart)) {
+          const isAvailable = await isDateAvailable(day);
+          if (isAvailable) {
+            available.add(day.toISOString().split('T')[0]);
+          }
+        }
+        day = addDays(day, 1);
+      }
+      
+      setAvailableDates(available);
+    };
+    
+    loadAvailableDates();
+  }, [currentMonth, isDateAvailable]);
+  
   const onDateClick = (day: Date) => {
-    if (isDateAvailable(day)) {
+    const dateString = day.toISOString().split('T')[0];
+    if (availableDates.has(dateString)) {
       setSelectedDate(day);
     }
   };
@@ -54,7 +84,8 @@ export const CalendarView: React.FC = () => {
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         const cloneDay = new Date(day);
-        const isAvailable = isDateAvailable(cloneDay);
+        const dateString = cloneDay.toISOString().split('T')[0];
+        const isAvailable = availableDates.has(dateString);
         const isSelected = selectedDate && isSameDay(cloneDay, selectedDate);
         days.push(<div key={day.toString()} className={`p-2 border border-transparent text-center cursor-pointer 
               ${!isSameMonth(day, monthStart) ? 'text-gray-300' : isAvailable ? 'hover:border-blue-500' : 'text-gray-400 bg-gray-100 cursor-not-allowed'} 

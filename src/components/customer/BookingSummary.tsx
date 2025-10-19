@@ -1,5 +1,5 @@
-import React from 'react';
 import { format } from 'date-fns';
+import React from 'react';
 import { useBooking } from '../../context/BookingContext';
 export const BookingSummary: React.FC = () => {
   const {
@@ -36,8 +36,8 @@ export const BookingSummary: React.FC = () => {
             <img src={selectedStaff.photo} alt={selectedStaff.name} className="w-8 h-8 rounded-full object-cover mr-2" />
             <p className="text-sm">{selectedStaff.name}</p>
           </div>
-          {selectedStaff.priceSurcharge > 0 && <p className="text-sm text-gray-500 mt-1">
-              +R{selectedStaff.priceSurcharge.toFixed(2)} surcharge
+          {selectedStaff.price_surcharge > 0 && <p className="text-sm text-gray-500 mt-1">
+              +R{selectedStaff.price_surcharge.toFixed(2)} surcharge
             </p>}
         </div>}
       <div className="flex justify-between items-center font-semibold">

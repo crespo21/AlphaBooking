@@ -1,17 +1,16 @@
-import React from 'react';
 import { format } from 'date-fns';
+import React from 'react';
 import { useBooking } from '../../context/BookingContext';
 export const TimeSlotSelector: React.FC = () => {
   const {
     selectedDate,
     selectedTime,
     setSelectedTime,
-    getAvailableTimesForDate
+    availableTimes
   } = useBooking();
   if (!selectedDate) {
     return null;
   }
-  const availableTimes = getAvailableTimesForDate(selectedDate);
   if (availableTimes.length === 0) {
     return <div className="w-full mt-6">
         <h2 className="text-2xl font-semibold mb-4">Select a Time</h2>

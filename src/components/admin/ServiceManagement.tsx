@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon } from 'lucide-react';
-import mockServices from '../../data/mockServices.json';
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  duration: number;
-}
+import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { createService, deleteService, getServices, updateService } from '../../lib/database';
+import { Service } from '../../lib/supabase';
+
 export const ServiceManagement: React.FC = () => {
-  const [services, setServices] = useState<Service[]>(mockServices);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentService, setCurrentService] = useState<Service | null>(null);
+
   const initialFormState = {
     name: '',
     description: '',
@@ -19,6 +16,22 @@ export const ServiceManagement: React.FC = () => {
     duration: ''
   };
   const [formData, setFormData] = useState(initialFormState);
+
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  const loadServices = async () => {
+    try {
+      setLoading(true);
+      const data = await getServices();
+      setServices(data);
+    } catch (error) {
+      console.error('Error loading services:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const {
       name,
@@ -39,36 +52,55 @@ export const ServiceManagement: React.FC = () => {
       duration: service.duration.toString()
     });
   };
-  const handleDeleteClick = (serviceId: string) => {
-    // In a real app, this would make an API call
-    setServices(services.filter(service => service.id !== serviceId));
+  const handleDeleteClick = async (serviceId: string) => {
+    if (!confirm('Are you sure you want to delete this service?')) return;
+    
+    try {
+      await deleteService(serviceId);
+      setServices(services.filter(service => service.id !== serviceId));
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      alert('Failed to delete service');
+    }
   };
-  const handleAddNewClick = () => {
-    setIsEditing(false);
-    setCurrentService(null);
-    setFormData(initialFormState);
-  };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newService = {
-      id: currentService ? currentService.id : `service-${Date.now()}`,
+
+    const serviceData = {
       name: formData.name,
       description: formData.description,
       price: parseFloat(formData.price),
       duration: parseInt(formData.duration)
     };
-    if (isEditing && currentService) {
-      // Update existing service
-      setServices(services.map(service => service.id === currentService.id ? newService : service));
-    } else {
-      // Add new service
-      setServices([...services, newService]);
+
+    try {
+      if (isEditing && currentService) {
+        // Update existing service
+        const updated = await updateService(currentService.id, serviceData);
+        setServices(services.map(service => service.id === currentService.id ? updated : service));
+      } else {
+        // Add new service
+        const newService = await createService(serviceData);
+        setServices([...services, newService]);
+      }
+
+      // Reset form
+      setFormData(initialFormState);
+      setIsEditing(false);
+      setCurrentService(null);
+    } catch (error) {
+      console.error('Error saving service:', error);
+      alert('Failed to save service');
     }
-    // Reset form
-    setFormData(initialFormState);
+  };
+
+  const handleAddNewClick = () => {
     setIsEditing(false);
     setCurrentService(null);
+    setFormData(initialFormState);
   };
+
   return <div className="w-full">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Service Management</h1>
@@ -98,7 +130,19 @@ export const ServiceManagement: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {services.map(service => <tr key={service.id}>
+                {loading ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
+                      Loading services...
+                    </td>
+                  </tr>
+                ) : services.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
+                      No services found. Add your first service!
+                    </td>
+                  </tr>
+                ) : services.map(service => <tr key={service.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {service.name}
@@ -111,7 +155,7 @@ export const ServiceManagement: React.FC = () => {
                       {service.duration} mins
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ${service.price.toFixed(2)}
+                      R{service.price.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button onClick={() => handleEditClick(service)} className="text-blue-600 hover:text-blue-900 mr-3">

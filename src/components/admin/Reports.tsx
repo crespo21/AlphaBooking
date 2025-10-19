@@ -1,18 +1,43 @@
-import React, { useState, useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { CalendarIcon, FilterIcon, DownloadIcon, TrendingUpIcon, TrendingDownIcon, StarIcon } from 'lucide-react';
-import mockBookings from '../../data/mockBookings.json';
-import mockStaff from '../../data/mockStaff.json';
-import mockServices from '../../data/mockServices.json';
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, parseISO, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, isWithinInterval } from 'date-fns';
+import { eachDayOfInterval, eachMonthOfInterval, eachWeekOfInterval, endOfMonth, endOfWeek, endOfYear, format, isWithinInterval, parseISO, startOfMonth, startOfWeek, startOfYear } from 'date-fns';
+import { CalendarIcon, DownloadIcon, StarIcon, TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { getBookings, getServices, getStaff } from '../../lib/database';
+import { Booking, Service, Staff } from '../../lib/supabase';
 
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
 
 export const Reports: React.FC = () => {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState('month');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [staffFilter, setStaffFilter] = useState('all');
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [bookingsData, servicesData, staffData] = await Promise.all([
+        getBookings(),
+        getServices(),
+        getStaff()
+      ]);
+      setBookings(bookingsData);
+      setServices(servicesData);
+      setStaff(staffData);
+    } catch (error) {
+      console.error('Error loading reports data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Calculate date range based on filter
   const getDateRange = () => {
@@ -57,21 +82,21 @@ export const Reports: React.FC = () => {
 
   // Filter bookings based on date range and staff
   const filteredBookings = useMemo(() => {
-    return mockBookings.filter(booking => {
+    return bookings.filter(booking => {
       const bookingDate = parseISO(booking.date);
       const dateInRange = isWithinInterval(bookingDate, { start: dateStart, end: dateEnd });
-      const staffMatch = staffFilter === 'all' || booking.staffId === staffFilter;
+      const staffMatch = staffFilter === 'all' || booking.staff_id === staffFilter;
       return dateInRange && staffMatch;
     });
-  }, [dateStart, dateEnd, staffFilter]);
+  }, [bookings, dateStart, dateEnd, staffFilter]);
 
   // Calculate key metrics
   const metrics = useMemo(() => {
     const confirmed = filteredBookings.filter(b => b.status === 'confirmed');
     const cancelled = filteredBookings.filter(b => b.status === 'cancelled');
     
-    const totalRevenue = confirmed.reduce((sum, b) => sum + b.totalPrice, 0);
-    const cancelledRevenue = cancelled.reduce((sum, b) => sum + (b.refundAmount || 0), 0);
+    const totalRevenue = confirmed.reduce((sum, b) => sum + b.total_price, 0);
+    const cancelledRevenue = cancelled.reduce((sum, b) => sum + (b.refund_amount || 0), 0);
     
     const reviewedBookings = confirmed.filter(b => b.rating !== null && b.rating !== undefined);
     const averageRating = reviewedBookings.length > 0
@@ -136,11 +161,11 @@ export const Reports: React.FC = () => {
 
       const revenue = periodBookings
         .filter(b => b.status === 'confirmed')
-        .reduce((sum, b) => sum + b.totalPrice, 0);
+        .reduce((sum, b) => sum + b.total_price, 0);
       
       const cancelled = periodBookings
         .filter(b => b.status === 'cancelled')
-        .reduce((sum, b) => sum + (b.refundAmount || 0), 0);
+        .reduce((sum, b) => sum + (b.refund_amount || 0), 0);
 
       return {
         name: format(date, formatStr),
@@ -153,42 +178,42 @@ export const Reports: React.FC = () => {
 
   // Staff performance data
   const staffPerformanceData = useMemo(() => {
-    const staffToFilter = staffFilter === 'all' ? mockStaff : mockStaff.filter(s => s.id === staffFilter);
+    const staffToFilter = staffFilter === 'all' ? staff : staff.filter(s => s.id === staffFilter);
     
-    return staffToFilter.map(staff => {
+    return staffToFilter.map(staffMember => {
       const staffBookings = filteredBookings.filter(
-        b => b.staffId === staff.id && b.status === 'confirmed'
+        b => b.staff_id === staffMember.id && b.status === 'confirmed'
       );
       
-      const revenue = staffBookings.reduce((sum, b) => sum + b.totalPrice, 0);
+      const revenue = staffBookings.reduce((sum, b) => sum + b.total_price, 0);
       const reviewedBookings = staffBookings.filter(b => b.rating !== null && b.rating !== undefined);
       const avgRating = reviewedBookings.length > 0
         ? reviewedBookings.reduce((sum, b) => sum + (b.rating || 0), 0) / reviewedBookings.length
         : 0;
 
       return {
-        name: staff.name,
+        name: staffMember.name,
         appointments: staffBookings.length,
         revenue: Math.round(revenue),
         rating: avgRating
       };
     });
-  }, [filteredBookings, staffFilter]);
+  }, [filteredBookings, staffFilter, staff]);
 
   // Service distribution
   const serviceDistributionData = useMemo(() => {
-    return mockServices.map(service => {
+    return services.map(service => {
       const serviceBookings = filteredBookings.filter(
-        b => b.serviceId === service.id && b.status === 'confirmed'
+        b => b.service_id === service.id && b.status === 'confirmed'
       );
       
       return {
         name: service.name,
         value: serviceBookings.length,
-        revenue: serviceBookings.reduce((sum, b) => sum + b.totalPrice, 0)
+        revenue: serviceBookings.reduce((sum, b) => sum + b.total_price, 0)
       };
     }).filter(s => s.value > 0);
-  }, [filteredBookings]);
+  }, [filteredBookings, services]);
 
   // Reviews data
   const recentReviews = useMemo(() => {
@@ -202,6 +227,14 @@ export const Reports: React.FC = () => {
     // In a real app, this would export data as CSV or PDF
     alert('Exporting reports... (This would download a file in a production app)');
   };
+
+  if (loading) {
+    return (
+      <div className="w-full flex items-center justify-center h-96">
+        <p className="text-gray-500">Loading reports...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -273,9 +306,9 @@ export const Reports: React.FC = () => {
               className="p-2 border border-gray-300 rounded-md"
             >
               <option value="all">All Staff</option>
-              {mockStaff.map(staff => (
-                <option key={staff.id} value={staff.id}>
-                  {staff.name}
+              {staff.map(staffMember => (
+                <option key={staffMember.id} value={staffMember.id}>
+                  {staffMember.name}
                 </option>
               ))}
             </select>
@@ -481,16 +514,16 @@ export const Reports: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">Recent Customer Reviews</h2>
           <div className="space-y-4">
             {recentReviews.map(review => {
-              const staff = mockStaff.find(s => s.id === review.staffId);
-              const service = mockServices.find(s => s.id === review.serviceId);
+              const reviewStaff = staff.find(s => s.id === review.staff_id);
+              const reviewService = services.find(s => s.id === review.service_id);
               
               return (
                 <div key={review.id} className="border-b border-gray-200 pb-4 last:border-0">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-medium">{review.customerName}</p>
+                      <p className="font-medium">{review.customer_name}</p>
                       <p className="text-sm text-gray-500">
-                        {service?.name} with {staff?.name || 'Staff Member'}
+                        {reviewService?.name} with {reviewStaff?.name || 'Staff Member'}
                       </p>
                     </div>
                     <div className="flex items-center">

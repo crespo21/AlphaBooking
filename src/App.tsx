@@ -1,6 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { CalendarIcon, UserCogIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 export function App() {
   return <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">

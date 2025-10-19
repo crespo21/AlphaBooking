@@ -5,7 +5,9 @@ All notable changes to the Alpha Bookings project.
 ## [2.0.0] - 2025-10-19
 
 ### 🌍 Localization
+
 #### Changed
+
 - **Currency Conversion:** Converted entire application from USD ($) to South African Rand (R/ZAR)
   - All service prices updated (e.g., Basic Haircut: $60 → R250)
   - All staff surcharges updated (e.g., Alex Johnson: $10 → R40)
@@ -18,7 +20,9 @@ All notable changes to the Alpha Bookings project.
   - ZAR set as default currency in System Settings
 
 ### 🎨 Branding & Customization
+
 #### Added
+
 - **Business Hours Management:**
   - Configure hours for each day of the week
   - Toggle to enable/disable specific days
@@ -37,7 +41,9 @@ All notable changes to the Alpha Bookings project.
   - Shows real staff data with correct pricing
 
 ### 📊 Reports & Analytics
+
 #### Added
+
 - **New Key Metrics:**
   - Average appointments per day
   - Average income per week  
@@ -69,7 +75,9 @@ All notable changes to the Alpha Bookings project.
   - Export button for CSV/PDF reports (ready for implementation)
 
 ### 📅 Appointments Management
+
 #### Added
+
 - **Appointment Details Drill-Down:**
   - Modal with complete appointment information
   - Customer details (name, email, phone)
@@ -93,7 +101,9 @@ All notable changes to the Alpha Bookings project.
   - Clear user feedback throughout process
 
 ### 🧭 Navigation Improvements
+
 #### Added
+
 - **Dashboard Quick Actions:**
   - "System Settings" button navigates to settings page
   - "Manage Appointments" button navigates to appointments
@@ -106,12 +116,15 @@ All notable changes to the Alpha Bookings project.
   - React Router navigation (no page refreshes)
 
 #### Changed
+
 - All navigation now uses React Router's useNavigate hook
 - Removed dependency on browser back button
 - Improved mobile navigation experience
 
 ### 🗄️ Data Enhancements
+
 #### Changed
+
 - **Mock Bookings Data:**
   - Added realistic booking records (6 total)
   - Included ratings and reviews
@@ -130,14 +143,18 @@ All notable changes to the Alpha Bookings project.
   - Maintained service descriptions and durations
 
 ### ⚙️ System Settings
+
 #### Changed
+
 - Default currency: USD → ZAR
 - Default timezone: America/New_York → Africa/Johannesburg
 - Added ZAR to currency dropdown (first position)
 - Added South Africa timezone to dropdown (first position)
 
 ### 🎨 UI/UX Improvements
+
 #### Changed
+
 - Consistent currency formatting throughout app
 - Improved modal layouts for appointment details
 - Enhanced visual feedback for user actions
@@ -145,25 +162,31 @@ All notable changes to the Alpha Bookings project.
 - Clearer confirmation dialogs
 
 ### 📱 Customer Booking Flow
+
 #### Changed
+
 - Updated all price displays to ZAR
 - Maintained smooth step-by-step navigation
 - Back/Forward buttons work without browser dependency
 - Price calculations include staff surcharges in ZAR
 
 ### 🐛 Bug Fixes
+
 - Fixed currency display inconsistencies
 - Improved modal scroll behavior on mobile
 - Enhanced form validation feedback
 - Fixed chart tooltip formatting
 
 ### 📝 Documentation
+
 #### Added
+
 - IMPLEMENTATION_SUMMARY.md - Complete technical documentation
 - QUICK_START_GUIDE.md - Testing and usage guide
 - CHANGELOG.md - This file
 
 ### 🔧 Technical Improvements
+
 - Enhanced TypeScript type safety
 - Improved React component structure
 - Optimized chart rendering performance
@@ -174,7 +197,8 @@ All notable changes to the Alpha Bookings project.
 
 ## File Changes Summary
 
-### Modified Files (15):
+### Modified Files (15)
+
 1. `src/data/mockServices.json` - Currency conversion
 2. `src/data/mockStaff.json` - Currency conversion
 3. `src/data/mockBookings.json` - Currency, reviews, SA phone numbers
@@ -190,7 +214,8 @@ All notable changes to the Alpha Bookings project.
 13. `src/components/customer/ConfirmationView.tsx` - Currency display
 14. `src/components/shared/AdminLayout.tsx` - Navigation improvements
 
-### New Files (3):
+### New Files (3)
+
 1. `IMPLEMENTATION_SUMMARY.md`
 2. `QUICK_START_GUIDE.md`
 3. `CHANGELOG.md`

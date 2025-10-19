@@ -1,9 +1,29 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SaveIcon, UploadIcon, LinkIcon } from 'lucide-react';
-import mockStaff from '../../data/mockStaff.json';
+import { getStaff } from '../../lib/database';
+import { Staff } from '../../lib/supabase';
+
 export const BrandingCustomization: React.FC = () => {
   const [primaryColor, setPrimaryColor] = useState('#3B82F6'); // Default blue color
   const [logoUrl, setLogoUrl] = useState('https://via.placeholder.com/150x50?text=Your+Logo');
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadStaff();
+  }, []);
+
+  const loadStaff = async () => {
+    try {
+      setLoading(true);
+      const data = await getStaff();
+      setStaff(data);
+    } catch (error) {
+      console.error('Error loading staff:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   // Business hours state
   const [businessHours, setBusinessHours] = useState({
     monday: {
@@ -230,13 +250,17 @@ export const BrandingCustomization: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  {mockStaff.map(staff => <div key={staff.id} className={`border rounded-md p-3 bg-white cursor-pointer ${selectedStaffPreview === staff.id ? 'border-blue-500' : 'border-gray-200'}`} onClick={() => setSelectedStaffPreview(staff.id)}>
+                  {loading ? (
+                    <div className="text-center text-sm text-gray-500 py-4">
+                      Loading staff...
+                    </div>
+                  ) : staff.map(staffMember => <div key={staffMember.id} className={`border rounded-md p-3 bg-white cursor-pointer ${selectedStaffPreview === staffMember.id ? 'border-blue-500' : 'border-gray-200'}`} onClick={() => setSelectedStaffPreview(staffMember.id)}>
                       <div className="flex items-center">
-                        <img src={staff.photo} alt={staff.name} className="w-10 h-10 rounded-full object-cover" />
+                        <img src={staffMember.photo} alt={staffMember.name} className="w-10 h-10 rounded-full object-cover" />
                         <div className="ml-2">
-                          <p className="text-sm font-medium">{staff.name}</p>
+                          <p className="text-sm font-medium">{staffMember.name}</p>
                           <p className="text-xs text-gray-500">
-                          {staff.priceSurcharge > 0 ? `+R${staff.priceSurcharge.toFixed(2)}` : 'No additional charge'}
+                          {staffMember.price_surcharge > 0 ? `+R${staffMember.price_surcharge.toFixed(2)}` : 'No additional charge'}
                           </p>
                         </div>
                       </div>

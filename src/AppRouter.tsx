@@ -1,15 +1,14 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { App } from './App';
 import { BookingProvider } from './context/BookingContext';
-import { BookingFlow } from './pages/customer/BookingFlow';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AppointmentsPage } from './pages/admin/AppointmentsPage';
+import { BrandingCustomizationPage } from './pages/admin/BrandingCustomizationPage';
+import { ReportsPage } from './pages/admin/ReportsPage';
 import { ServiceManagementPage } from './pages/admin/ServiceManagementPage';
 import { StaffManagementPage } from './pages/admin/StaffManagementPage';
-import { BrandingCustomizationPage } from './pages/admin/BrandingCustomizationPage';
-import { AppointmentsPage } from './pages/admin/AppointmentsPage';
 import { SystemSettingsPage } from './pages/admin/SystemSettingsPage';
-import { ReportsPage } from './pages/admin/ReportsPage';
+import { BookingFlow } from './pages/customer/BookingFlow';
 export function AppRouter() {
   return <BrowserRouter>
       <BookingProvider>
