@@ -221,69 +221,90 @@ export const isDateAvailable = async (date: string): Promise<boolean> => {
   if (blackoutError && blackoutError.code !== 'PGRST116') throw blackoutError
   if (blackoutData) return false
   
-  // Check if there's availability for this day of week
-  const dayOfWeek = new Date(date).getDay()
+  // Check if there's any staff availability for this specific date
   const { data: availabilityData, error: availabilityError } = await supabase
     .from('availability')
     .select('id')
-    .eq('day_of_week', dayOfWeek)
+    .eq('date', date)
     .eq('is_available', true)
     .limit(1)
   
   if (availabilityError) throw availabilityError
-  return availabilityData && availabilityData.length > 0
+  
+  // If we have specific date availability, return true
+  if (availabilityData && availabilityData.length > 0) {
+    return true
+  }
+  
+  // If no specific date availability, check business hours for this day of week
+  const dateObj = new Date(date + 'T00:00:00')
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const dayName = dayNames[dateObj.getDay()]
+  
+  const { data: businessHours, error: bhError } = await supabase
+    .from('business_hours')
+    .select('is_open')
+    .eq('day_of_week', dayName)
+    .single()
+  
+  if (bhError && bhError.code !== 'PGRST116') throw bhError
+  
+  return businessHours?.is_open || false
 }
 
 export const getAvailableTimesForDate = async (date: string): Promise<string[]> => {
-  const dayOfWeek = new Date(date).getDay()
-  
-  // Check for special hours first
-  const { data: specialData, error: specialError } = await supabase
-    .from('special_dates')
-    .select('start_time, end_time')
+  // Get all staff availability for this specific date
+  const { data: availabilityData, error: availabilityError } = await supabase
+    .from('availability')
+    .select('start_time, end_time, staff_id')
     .eq('date', date)
-    .single()
+    .eq('is_available', true)
   
-  if (specialError && specialError.code !== 'PGRST116') throw specialError
+  if (availabilityError) throw availabilityError
   
-  if (specialData) {
-    // Generate time slots for special hours
-    const times = []
-    const start = new Date(`2000-01-01T${specialData.start_time}`)
-    const end = new Date(`2000-01-01T${specialData.end_time}`)
+  if (!availabilityData || availabilityData.length === 0) {
+    // Fallback to business hours if no staff availability
+    const dateObj = new Date(date + 'T00:00:00')
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const dayName = dayNames[dateObj.getDay()]
+    
+    const { data: businessHours, error: bhError } = await supabase
+      .from('business_hours')
+      .select('open_time, close_time, is_open')
+      .eq('day_of_week', dayName)
+      .single()
+    
+    if (bhError && bhError.code !== 'PGRST116') throw bhError
+    
+    if (!businessHours || !businessHours.is_open) return []
+    
+    // Generate time slots from business hours
+    const times: string[] = []
+    const start = new Date(`2000-01-01T${businessHours.open_time}`)
+    const end = new Date(`2000-01-01T${businessHours.close_time}`)
     
     while (start < end) {
       times.push(start.toTimeString().slice(0, 5))
       start.setMinutes(start.getMinutes() + 30)
     }
+    
     return times
   }
   
-  // Use regular availability
-  const { data: availabilityData, error: availabilityError } = await supabase
-    .from('availability')
-    .select('start_time, end_time')
-    .eq('day_of_week', dayOfWeek)
-    .eq('is_available', true)
-    .order('start_time')
+  // Generate time slots from staff availability
+  const timeSet = new Set<string>()
   
-  if (availabilityError) throw availabilityError
-  
-  if (!availabilityData || availabilityData.length === 0) return []
-  
-  // Generate time slots for regular hours
-  const times = []
   for (const slot of availabilityData) {
     const start = new Date(`2000-01-01T${slot.start_time}`)
     const end = new Date(`2000-01-01T${slot.end_time}`)
     
     while (start < end) {
-      times.push(start.toTimeString().slice(0, 5))
+      timeSet.add(start.toTimeString().slice(0, 5))
       start.setMinutes(start.getMinutes() + 30)
     }
   }
   
-  return [...new Set(times)].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+  return Array.from(timeSet).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
 }
 
 // Blackout dates

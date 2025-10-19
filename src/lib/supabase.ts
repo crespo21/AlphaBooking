@@ -41,6 +41,7 @@ export interface Staff {
   bio: string;
   services: string[];
   price_surcharge: number;
+  is_active?: boolean;
   created_at?: string;
   updated_at?: string;
 }
