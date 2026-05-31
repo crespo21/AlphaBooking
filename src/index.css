@@ -114,4 +114,38 @@
     color: #C4B5FD;
     background: rgba(124, 58, 237, 0.10);
   }
+
+  /* ── Dark admin inputs ── */
+  .input-dark {
+    @apply w-full px-4 py-3 rounded-xl text-white text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-venus-500;
+    background: rgba(12, 8, 24, 0.80);
+    border: 1px solid rgba(45, 32, 96, 0.80);
+  }
+  .input-dark:focus {
+    border-color: #7C3AED;
+  }
+  .input-dark option {
+    background: #1A1030;
+    color: #E9D5FF;
+  }
+  .input-dark::placeholder {
+    color: rgba(167, 139, 250, 0.40);
+  }
+
+  .label-dark {
+    @apply block text-xs font-bold uppercase tracking-wider text-violet-400 mb-2;
+  }
+
+  .section-dark {
+    @apply rounded-2xl p-6 mb-5;
+    background: rgba(30, 22, 53, 0.95);
+    border: 1px solid rgba(45, 32, 96, 0.80);
+  }
+
+  .toggle-venus {
+    @apply relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none;
+  }
+  .toggle-venus-thumb {
+    @apply pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out;
+  }
 }

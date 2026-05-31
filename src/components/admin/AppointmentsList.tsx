@@ -1,196 +1,162 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, CheckIcon, XIcon, UserPlusIcon, EyeIcon, BanIcon } from 'lucide-react';
-import mockBookings from '../../data/mockBookings.json';
-import mockServices from '../../data/mockServices.json';
-import mockStaff from '../../data/mockStaff.json';
 import { format } from 'date-fns';
+import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, EyeIcon, BanIcon, UserPlusIcon } from 'lucide-react';
+import mockBookings  from '../../data/mockBookings.json';
+import mockServices  from '../../data/mockServices.json';
+import mockStaff     from '../../data/mockStaff.json';
 import { AppointmentDetails } from './AppointmentDetails';
+
 interface Booking {
-  id: string;
-  confirmationNumber: string;
-  serviceId: string;
-  staffId: string;
-  date: string;
-  time: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  totalPrice: number;
-  status: string;
+  id: string; confirmationNumber: string; serviceId: string; staffId: string;
+  date: string; time: string; customerName: string; customerEmail: string;
+  customerPhone: string; totalPrice: number; status: string;
 }
+
+type Filter = 'all' | 'confirmed' | 'cancelled';
+
+const filterStyle = (active: boolean, color: string) =>
+  active
+    ? { background: `${color}22`, color, border: `1px solid ${color}55` }
+    : { background: 'rgba(255,255,255,0.04)', color: '#7C6FAB', border: '1px solid rgba(255,255,255,0.07)' };
+
+const statusStyle = (status: string) =>
+  status === 'confirmed'
+    ? { background: 'rgba(139,92,246,0.18)', color: '#A78BFA', border: '1px solid rgba(139,92,246,0.35)' }
+    : { background: 'rgba(239,68,68,0.15)',  color: '#F87171', border: '1px solid rgba(239,68,68,0.30)' };
+
 export const AppointmentsList: React.FC = () => {
-  const [bookings, setBookings] = useState<Booking[]>(mockBookings);
-  const [filter, setFilter] = useState('all');
+  // Merge mock bookings with any localStorage bookings
+  const localRaw = (() => { try { return JSON.parse(localStorage.getItem('alphabooking_bookings') ?? '[]'); } catch { return []; } })();
+  const [bookings, setBookings]         = useState<Booking[]>([...mockBookings, ...localRaw]);
+  const [filter, setFilter]             = useState<Filter>('all');
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [showDetails, setShowDetails] = useState(false);
-  // Get service name from service ID
-  const getServiceName = (serviceId: string) => {
-    const service = mockServices.find(service => service.id === serviceId);
-    return service ? service.name : 'Unknown Service';
+  const [selected, setSelected]         = useState<Booking | null>(null);
+
+  const serviceName = (id: string) => mockServices.find((s) => s.id === id)?.name ?? 'Unknown';
+  const staffName   = (id: string) => mockStaff.find((s) => s.id === id)?.name ?? 'Any Staff';
+
+  const filtered = bookings.filter((b) => filter === 'all' || b.status === filter);
+
+  const cancelBooking = (id: string) =>
+    setBookings((prev) => prev.map((b) => b.id === id ? { ...b, status: 'cancelled' } : b));
+
+  const assignStaff = (bookingId: string, staffId: string) => {
+    setBookings((prev) => prev.map((b) => b.id === bookingId ? { ...b, staffId } : b));
+    alert('Staff assigned successfully!');
   };
-  // Get staff name from staff ID
-  const getStaffName = (staffId: string) => {
-    const staff = mockStaff.find(staff => staff.id === staffId);
-    return staff ? staff.name : 'Any Staff';
-  };
-  const filteredBookings = bookings.filter(booking => {
-    if (filter === 'all') return true;
-    return booking.status === filter;
-  });
-  const handlePreviousMonth = () => {
-    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
-  };
-  const handleNextMonth = () => {
-    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
-  };
-  const handleViewDetails = (booking: Booking) => {
-    setSelectedBooking(booking);
-    setShowDetails(true);
-  };
-  const handleCancelBooking = (id: string) => {
-    setBookings(bookings.map(booking => booking.id === id ? {
-      ...booking,
-      status: 'cancelled'
-    } : booking));
-  };
-  const handleAssignStaff = (bookingId: string, staffId: string) => {
-    setBookings(bookings.map(booking => booking.id === bookingId ? {
-      ...booking,
-      staffId
-    } : booking));
-    // In a real app, this would make an API call
-    alert(`Staff assigned successfully!`);
-  };
-  return <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Appointments</h1>
-        <div className="flex space-x-2">
-          <button onClick={() => setFilter('all')} className={`px-4 py-2 rounded-md ${filter === 'all' ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-600'}`}>
-            All
-          </button>
-          <button onClick={() => setFilter('confirmed')} className={`px-4 py-2 rounded-md ${filter === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-white text-gray-600'}`}>
-            Confirmed
-          </button>
-          <button onClick={() => setFilter('cancelled')} className={`px-4 py-2 rounded-md ${filter === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-white text-gray-600'}`}>
-            Cancelled
-          </button>
+
+  return (
+    <div className="animate-fadeIn">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-black text-white mb-1">Appointments</h1>
+          <p className="text-violet-400 text-sm">View and manage all bookings.</p>
+        </div>
+
+        {/* Filter pills */}
+        <div className="flex gap-2">
+          {(['all', 'confirmed', 'cancelled'] as Filter[]).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className="px-4 py-2 rounded-xl text-xs font-bold capitalize transition-all"
+              style={filterStyle(filter === f, f === 'confirmed' ? '#8B5CF6' : f === 'cancelled' ? '#EF4444' : '#7C6FAB')}
+            >
+              {f}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center">
-          <Calendar className="w-5 h-5 mr-2 text-gray-500" />
-          <div className="flex items-center">
-            <button onClick={handlePreviousMonth} className="p-1 mr-2 rounded-full hover:bg-gray-100">
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <h2 className="text-lg font-medium">
-              {format(currentMonth, 'MMMM yyyy')}
-            </h2>
-            <button onClick={handleNextMonth} className="p-1 ml-2 rounded-full hover:bg-gray-100">
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+
+      {/* Month navigator */}
+      <div className="flex items-center gap-3 mb-6">
+        <CalendarIcon className="w-4 h-4 text-violet-400" />
+        <button onClick={() => setCurrentMonth((p) => new Date(p.getFullYear(), p.getMonth() - 1, 1))}
+          className="p-1.5 rounded-lg text-violet-400 hover:text-white hover:bg-white/10 transition-colors">
+          <ChevronLeftIcon className="w-4 h-4" />
+        </button>
+        <span className="text-sm font-bold text-white min-w-[120px] text-center">{format(currentMonth, 'MMMM yyyy')}</span>
+        <button onClick={() => setCurrentMonth((p) => new Date(p.getFullYear(), p.getMonth() + 1, 1))}
+          className="p-1.5 rounded-lg text-violet-400 hover:text-white hover:bg-white/10 transition-colors">
+          <ChevronRightIcon className="w-4 h-4" />
+        </button>
+        <span className="text-xs text-violet-500 ml-2">{filtered.length} booking{filtered.length !== 1 ? 's' : ''}</span>
       </div>
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+
+      {/* Table */}
+      <div className="card-dark overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date & Time
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Service
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Staff
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Price
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                {['Date & Time', 'Customer', 'Service', 'Staff', 'Amount', 'Status', ''].map((h) => (
+                  <th key={h} className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-violet-400">{h}</th>
+                ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredBookings.length > 0 ? filteredBookings.map(booking => <tr key={booking.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {booking.date}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {booking.time}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {booking.customerName}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {booking.customerEmail}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {booking.customerPhone}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {getServiceName(booking.serviceId)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="text-sm text-gray-900">
-                          {booking.staffId === 'any' ? <span className="text-amber-600 flex items-center">
-                              <UserPlusIcon className="w-4 h-4 mr-1" />
-                              Needs Assignment
-                            </span> : getStaffName(booking.staffId)}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        ${booking.totalPrice.toFixed(2)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button onClick={() => handleViewDetails(booking)} className="text-blue-600 hover:text-blue-900 flex items-center">
-                          <EyeIcon className="w-4 h-4 mr-1" />
-                          Details
-                        </button>
-                        {booking.status === 'confirmed' && <button onClick={() => {
-                    setSelectedBooking(booking);
-                    handleCancelBooking(booking.id);
-                  }} className="text-red-600 hover:text-red-900 flex items-center">
-                            <BanIcon className="w-4 h-4 mr-1" />
-                            Cancel
-                          </button>}
-                      </div>
-                    </td>
-                  </tr>) : <tr>
-                  <td colSpan={7} className="px-6 py-4 text-center text-sm text-gray-500">
-                    No appointments found
+            <tbody>
+              {filtered.length > 0 ? filtered.map((b) => (
+                <tr key={b.id} className="transition-colors hover:bg-white/[0.03]"
+                  style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <td className="px-4 py-4">
+                    <p className="font-semibold text-white text-xs">{b.date}</p>
+                    <p className="text-violet-400 text-xs mt-0.5">{b.time}</p>
                   </td>
-                </tr>}
+                  <td className="px-4 py-4">
+                    <p className="font-semibold text-white text-xs">{b.customerName}</p>
+                    <p className="text-violet-400 text-xs mt-0.5 truncate max-w-[140px]">{b.customerEmail}</p>
+                  </td>
+                  <td className="px-4 py-4 text-violet-300 text-xs">{serviceName(b.serviceId)}</td>
+                  <td className="px-4 py-4">
+                    {b.staffId === 'any' ? (
+                      <span className="flex items-center gap-1 text-xs font-semibold text-gold-400">
+                        <UserPlusIcon className="w-3.5 h-3.5" />
+                        Unassigned
+                      </span>
+                    ) : (
+                      <span className="text-violet-300 text-xs">{staffName(b.staffId)}</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="font-black text-sm" style={{ color: '#FBBF24' }}>${b.totalPrice.toFixed(2)}</span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold" style={statusStyle(b.status)}>
+                      {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-1.5 justify-end">
+                      <button onClick={() => setSelected(b)}
+                        className="p-1.5 rounded-lg text-violet-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors">
+                        <EyeIcon className="w-4 h-4" />
+                      </button>
+                      {b.status === 'confirmed' && (
+                        <button onClick={() => cancelBooking(b.id)}
+                          className="p-1.5 rounded-lg text-violet-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                          <BanIcon className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )) : (
+                <tr><td colSpan={7} className="py-12 text-center text-violet-500 text-sm">No appointments found.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
-      {showDetails && selectedBooking && <AppointmentDetails booking={selectedBooking} onClose={() => setShowDetails(false)} onCancel={handleCancelBooking} onAssignStaff={handleAssignStaff} />}
-    </div>;
+
+      {selected && (
+        <AppointmentDetails
+          booking={selected}
+          onClose={() => setSelected(null)}
+          onCancel={cancelBooking}
+          onAssignStaff={assignStaff}
+        />
+      )}
+    </div>
+  );
 };

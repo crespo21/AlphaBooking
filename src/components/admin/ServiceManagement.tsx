@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon } from 'lucide-react';
+import { PlusIcon, PencilIcon, TrashIcon, ScissorsIcon, XIcon } from 'lucide-react';
 import mockServices from '../../data/mockServices.json';
+
 interface Service {
   id: string;
   name: string;
@@ -8,171 +9,173 @@ interface Service {
   price: number;
   duration: number;
 }
+
+const blank = { name: '', description: '', price: '', duration: '' };
+
 export const ServiceManagement: React.FC = () => {
-  const [services, setServices] = useState<Service[]>(mockServices);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentService, setCurrentService] = useState<Service | null>(null);
-  const initialFormState = {
-    name: '',
-    description: '',
-    price: '',
-    duration: ''
+  const [services, setServices]         = useState<Service[]>(mockServices);
+  const [isEditing, setIsEditing]       = useState(false);
+  const [current, setCurrent]           = useState<Service | null>(null);
+  const [form, setForm]                 = useState(blank);
+  const [showForm, setShowForm]         = useState(false);
+
+  const openAdd = () => { setIsEditing(false); setCurrent(null); setForm(blank); setShowForm(true); };
+  const openEdit = (s: Service) => {
+    setIsEditing(true); setCurrent(s);
+    setForm({ name: s.name, description: s.description, price: String(s.price), duration: String(s.duration) });
+    setShowForm(true);
   };
-  const [formData, setFormData] = useState(initialFormState);
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const {
-      name,
-      value
-    } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-  const handleEditClick = (service: Service) => {
-    setIsEditing(true);
-    setCurrentService(service);
-    setFormData({
-      name: service.name,
-      description: service.description,
-      price: service.price.toString(),
-      duration: service.duration.toString()
-    });
-  };
-  const handleDeleteClick = (serviceId: string) => {
-    // In a real app, this would make an API call
-    setServices(services.filter(service => service.id !== serviceId));
-  };
-  const handleAddNewClick = () => {
-    setIsEditing(false);
-    setCurrentService(null);
-    setFormData(initialFormState);
-  };
+  const cancel = () => { setShowForm(false); setForm(blank); setCurrent(null); setIsEditing(false); };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newService = {
-      id: currentService ? currentService.id : `service-${Date.now()}`,
-      name: formData.name,
-      description: formData.description,
-      price: parseFloat(formData.price),
-      duration: parseInt(formData.duration)
+    const s: Service = {
+      id: current?.id ?? `service-${Date.now()}`,
+      name: form.name, description: form.description,
+      price: parseFloat(form.price), duration: parseInt(form.duration),
     };
-    if (isEditing && currentService) {
-      // Update existing service
-      setServices(services.map(service => service.id === currentService.id ? newService : service));
-    } else {
-      // Add new service
-      setServices([...services, newService]);
-    }
-    // Reset form
-    setFormData(initialFormState);
-    setIsEditing(false);
-    setCurrentService(null);
+    setServices(isEditing ? services.map((x) => (x.id === s.id ? s : x)) : [...services, s]);
+    cancel();
   };
-  return <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Service Management</h1>
-        <button onClick={handleAddNewClick} className="flex items-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-          <PlusIcon className="w-4 h-4 mr-1" />
-          Add New Service
+
+  const inp = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  return (
+    <div className="animate-fadeIn">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-black text-white mb-1">Services</h1>
+          <p className="text-violet-400 text-sm">Manage the treatments you offer.</p>
+        </div>
+        <button onClick={openAdd} className="btn-venus text-sm">
+          <PlusIcon className="w-4 h-4" />
+          Add Service
         </button>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Duration
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+        {/* ── Table ── */}
+        <div className="lg:col-span-2 card-dark overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  {['Service', 'Duration', 'Price', ''].map((h) => (
+                    <th key={h} className="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-violet-400">{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {services.map(service => <tr key={service.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {service.name}
+              <tbody>
+                {services.map((s) => (
+                  <tr
+                    key={s.id}
+                    className="transition-colors hover:bg-white/[0.03]"
+                    style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                  >
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                          style={{ background: 'rgba(124,58,237,0.20)' }}>
+                          <ScissorsIcon className="w-4 h-4 text-venus-400" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-white">{s.name}</p>
+                          <p className="text-xs text-violet-400 mt-0.5">{s.description}</p>
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {service.description}
+                    </td>
+                    <td className="px-5 py-4 text-violet-300 text-sm">{s.duration} min</td>
+                    <td className="px-5 py-4">
+                      <span className="font-black text-base" style={{ color: '#FBBF24' }}>
+                        ${s.price.toFixed(2)}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-2 justify-end">
+                        <button
+                          onClick={() => openEdit(s)}
+                          className="p-1.5 rounded-lg text-violet-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors"
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setServices(services.filter((x) => x.id !== s.id))}
+                          className="p-1.5 rounded-lg text-violet-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {service.duration} mins
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ${service.price.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button onClick={() => handleEditClick(service)} className="text-blue-600 hover:text-blue-900 mr-3">
-                        <PencilIcon className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDeleteClick(service.id)} className="text-red-600 hover:text-red-900">
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>)}
+                  </tr>
+                ))}
+                {services.length === 0 && (
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-violet-500 text-sm">No services yet. Add one!</td></tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
+
+        {/* ── Form ── */}
         <div className="lg:col-span-1">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">
-              {isEditing ? 'Edit Service' : 'Add New Service'}
-            </h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Service Name
-                </label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md" required />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
-                </label>
-                <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} rows={3} className="w-full p-2 border border-gray-300 rounded-md" required />
-              </div>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                    Price ($)
-                  </label>
-                  <input type="number" id="price" name="price" value={formData.price} onChange={handleInputChange} min="0" step="0.01" className="w-full p-2 border border-gray-300 rounded-md" required />
-                </div>
-                <div>
-                  <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">
-                    Duration (mins)
-                  </label>
-                  <input type="number" id="duration" name="duration" value={formData.duration} onChange={handleInputChange} min="0" step="5" className="w-full p-2 border border-gray-300 rounded-md" required />
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button type="button" onClick={() => {
-                setFormData(initialFormState);
-                setIsEditing(false);
-                setCurrentService(null);
-              }} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                  {isEditing ? 'Update Service' : 'Add Service'}
+          {showForm ? (
+            <div className="card-dark p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="font-bold text-white">{isEditing ? 'Edit Service' : 'New Service'}</h2>
+                <button onClick={cancel} className="text-violet-500 hover:text-violet-300 transition-colors">
+                  <XIcon className="w-4 h-4" />
                 </button>
               </div>
-            </form>
-          </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="label-dark">Name</label>
+                  <input name="name" value={form.name} onChange={inp} required placeholder="e.g. Premium Cut" className="input-dark" />
+                </div>
+                <div>
+                  <label className="label-dark">Description</label>
+                  <textarea name="description" value={form.description} onChange={inp} required rows={3}
+                    placeholder="Brief description…"
+                    className="input-dark resize-none" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="label-dark">Price ($)</label>
+                    <input name="price" type="number" min="0" step="0.01" value={form.price} onChange={inp} required placeholder="0.00" className="input-dark" />
+                  </div>
+                  <div>
+                    <label className="label-dark">Duration (min)</label>
+                    <input name="duration" type="number" min="5" step="5" value={form.duration} onChange={inp} required placeholder="30" className="input-dark" />
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button type="button" onClick={cancel}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-violet-400 border transition-colors"
+                    style={{ borderColor: 'rgba(124,58,237,0.30)', background: 'transparent' }}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="flex-1 btn-venus text-sm">
+                    {isEditing ? 'Save' : 'Add'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          ) : (
+            <div
+              onClick={openAdd}
+              className="card-dark p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-venus-500/50 transition-all"
+              style={{ minHeight: '200px', borderStyle: 'dashed' }}
+            >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
+                style={{ background: 'rgba(124,58,237,0.15)' }}>
+                <PlusIcon className="w-6 h-6 text-venus-400" />
+              </div>
+              <p className="font-bold text-violet-300 text-sm">Add New Service</p>
+              <p className="text-xs text-violet-500 mt-1">Click to open form</p>
+            </div>
+          )}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
