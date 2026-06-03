@@ -72,7 +72,7 @@ export const BookingFlow: React.FC = () => {
           <Link to="/" className="flex items-center gap-2 group">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #7C3AED, #EC4899)' }}
+              style={{ background: 'linear-gradient(135deg, #5F6F2E, #B5944A)' }}
             >
               <SparklesIcon className="w-4 h-4 text-white" />
             </div>
@@ -97,7 +97,7 @@ export const BookingFlow: React.FC = () => {
                       ? 'text-venus-700 border-2 border-venus-500 bg-white shadow-venus'
                       : 'text-gray-400 border-2 border-gray-200 bg-white'
                   }`}
-                  style={index < currentStep ? { background: 'linear-gradient(135deg, #7C3AED, #5B21B6)' } : {}}
+                  style={index < currentStep ? { background: 'linear-gradient(135deg, #5F6F2E, #3D4A1B)' } : {}}
                 >
                   {index < currentStep ? <CheckIcon className="w-4 h-4" /> : index + 1}
                 </div>
@@ -116,7 +116,7 @@ export const BookingFlow: React.FC = () => {
                   className="flex-1 h-0.5 mx-3 mb-5 rounded-full transition-all duration-500"
                   style={{
                     background: index < currentStep
-                      ? 'linear-gradient(90deg, #7C3AED, #5B21B6)'
+                      ? 'linear-gradient(90deg, #5F6F2E, #3D4A1B)'
                       : '#E5E7EB',
                     maxWidth: '80px',
                   }}
@@ -137,7 +137,7 @@ export const BookingFlow: React.FC = () => {
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${((currentStep + 1) / steps.length) * 100}%`,
-                background: 'linear-gradient(90deg, #7C3AED, #EC4899)',
+                background: 'linear-gradient(90deg, #5F6F2E, #B5944A)',
               }}
             />
           </div>

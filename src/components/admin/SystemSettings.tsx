@@ -17,13 +17,13 @@ export const SystemSettings: React.FC = () => {
     <div className="flex items-center justify-between py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
       <div>
         <p className="text-sm font-semibold text-white">{label}</p>
-        {sub && <p className="text-xs text-violet-500 mt-0.5">{sub}</p>}
+        {sub && <p className="text-xs text-venus-500 mt-0.5">{sub}</p>}
       </div>
       <button
         type="button"
         onClick={() => onChange(!checked)}
         className="relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0"
-        style={{ background: checked ? '#7C3AED' : 'rgba(45,32,96,0.80)' }}
+        style={{ background: checked ? '#5F6F2E' : 'rgba(37,43,14,0.80)' }}
       >
         <span className="absolute top-0.5 inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-200"
           style={{ transform: checked ? 'translateX(20px)' : 'translateX(2px)' }} />
@@ -47,7 +47,7 @@ export const SystemSettings: React.FC = () => {
     <div className="animate-fadeIn max-w-2xl">
       <div className="mb-8">
         <h1 className="text-3xl font-black text-white mb-1">System Settings</h1>
-        <p className="text-violet-400 text-sm">Configure notifications, payments, and booking rules.</p>
+        <p className="text-venus-400 text-sm">Configure notifications, payments, and booking rules.</p>
       </div>
 
       {/* Notifications */}

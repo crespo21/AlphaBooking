@@ -71,7 +71,7 @@ export const ConfirmationView: React.FC<Props> = ({ confirmationNumber }) => {
       <div className="text-center mb-8">
         <div
           className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-5 shadow-venus-xl"
-          style={{ background: 'linear-gradient(135deg, #7C3AED, #EC4899)' }}
+          style={{ background: 'linear-gradient(135deg, #5F6F2E, #B5944A)' }}
         >
           <CheckCircleIcon className="w-10 h-10 text-white" />
         </div>
@@ -109,7 +109,7 @@ export const ConfirmationView: React.FC<Props> = ({ confirmationNumber }) => {
 
           <div className="flex justify-between pt-4 border-t border-gray-100">
             <span className="font-bold text-gray-900">Total Paid</span>
-            <span className="text-xl font-black" style={{ color: '#F59E0B' }}>
+            <span className="text-xl font-black" style={{ color: '#B5944A' }}>
               ${totalPrice.toFixed(2)}
             </span>
           </div>
@@ -119,7 +119,7 @@ export const ConfirmationView: React.FC<Props> = ({ confirmationNumber }) => {
       {/* Reminder notice */}
       <div
         className="rounded-2xl p-4 mb-6 flex items-start gap-3"
-        style={{ background: 'rgba(124,58,237,0.07)', border: '1px solid rgba(124,58,237,0.20)' }}
+        style={{ background: 'rgba(95,111,46,0.07)', border: '1px solid rgba(95,111,46,0.20)' }}
       >
         <BellIcon className="w-5 h-5 text-venus-500 shrink-0 mt-0.5" />
         <div>

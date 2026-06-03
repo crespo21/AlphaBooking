@@ -33,7 +33,7 @@ export const ServiceSelection: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span
                   className="text-xl font-black"
-                  style={{ color: '#F59E0B' }}
+                  style={{ color: '#B5944A' }}
                 >
                   ${service.price.toFixed(2)}
                 </span>

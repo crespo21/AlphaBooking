@@ -47,14 +47,14 @@ const highlights = [
 
 export function App() {
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #0F0A1E 0%, #1A1030 55%, #2D1B69 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #151508 0%, #1C1F0A 55%, #2C3010 100%)' }}>
       {/* ── Navigation ── */}
       <header className="glass sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center shadow-glow"
-              style={{ background: 'linear-gradient(135deg, #7C3AED, #EC4899)' }}
+              style={{ background: 'linear-gradient(135deg, #5F6F2E, #B5944A)' }}
             >
               <SparklesIcon className="w-5 h-5 text-white" />
             </div>
@@ -63,7 +63,7 @@ export function App() {
           <nav className="flex items-center gap-4">
             <Link
               to="/booking"
-              className="text-sm font-semibold text-violet-300 hover:text-white transition-colors"
+              className="text-sm font-semibold text-venus-300 hover:text-white transition-colors"
             >
               Book Now
             </Link>
@@ -80,8 +80,8 @@ export function App() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center animate-fadeIn">
           {/* Badge */}
           <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-violet-300 mb-8"
-            style={{ background: 'rgba(124,58,237,0.18)', border: '1px solid rgba(124,58,237,0.40)' }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-venus-300 mb-8"
+            style={{ background: 'rgba(95,111,46,0.18)', border: '1px solid rgba(95,111,46,0.40)' }}
           >
             <SparklesIcon className="w-3.5 h-3.5" />
             Premium Appointment Booking Platform
@@ -92,7 +92,7 @@ export function App() {
             Book with{' '}
             <span
               style={{
-                background: 'linear-gradient(135deg, #A78BFA 0%, #EC4899 100%)',
+                background: 'linear-gradient(135deg, #9BAD55 0%, #B5944A 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -100,7 +100,7 @@ export function App() {
               Confidence
             </span>
           </h1>
-          <p className="text-lg sm:text-xl text-violet-300/80 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg sm:text-xl text-venus-300/80 max-w-2xl mx-auto mb-12 leading-relaxed">
             Seamless appointment scheduling designed for premium service businesses
             and discerning clients who expect the best.
           </p>
@@ -136,14 +136,14 @@ export function App() {
                 <div
                   className="text-5xl font-black mb-2"
                   style={{
-                    background: 'linear-gradient(135deg, #A78BFA, #EC4899)',
+                    background: 'linear-gradient(135deg, #9BAD55, #B5944A)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
                   {s.value}
                 </div>
-                <div className="text-violet-300 font-medium text-sm">{s.label}</div>
+                <div className="text-venus-300 font-medium text-sm">{s.label}</div>
               </div>
             ))}
           </div>
@@ -155,7 +155,7 @@ export function App() {
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">
               Everything you need
             </h2>
-            <p className="text-violet-300/70 text-base max-w-xl mx-auto">
+            <p className="text-venus-300/70 text-base max-w-xl mx-auto">
               A complete booking suite that handles everything from first click to confirmed appointment.
             </p>
           </div>
@@ -168,12 +168,12 @@ export function App() {
               >
                 <div
                   className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-5"
-                  style={{ background: 'linear-gradient(135deg, #7C3AED, #EC4899)' }}
+                  style={{ background: 'linear-gradient(135deg, #5F6F2E, #B5944A)' }}
                 >
                   <f.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{f.title}</h3>
-                <p className="text-violet-300/70 text-sm leading-relaxed">{f.description}</p>
+                <p className="text-venus-300/70 text-sm leading-relaxed">{f.description}</p>
               </div>
             ))}
           </div>
@@ -181,12 +181,12 @@ export function App() {
           {/* Highlights list */}
           <div
             className="rounded-2xl p-8 grid grid-cols-1 sm:grid-cols-2 gap-4"
-            style={{ background: 'rgba(124,58,237,0.10)', border: '1px solid rgba(124,58,237,0.25)' }}
+            style={{ background: 'rgba(95,111,46,0.10)', border: '1px solid rgba(95,111,46,0.25)' }}
           >
             {highlights.map((h) => (
               <div key={h} className="flex items-center gap-3">
-                <CheckCircleIcon className="w-5 h-5 text-violet-400 shrink-0" />
-                <span className="text-violet-200 text-sm font-medium">{h}</span>
+                <CheckCircleIcon className="w-5 h-5 text-venus-400 shrink-0" />
+                <span className="text-venus-200 text-sm font-medium">{h}</span>
               </div>
             ))}
           </div>
@@ -197,15 +197,15 @@ export function App() {
           <div
             className="rounded-3xl p-10 text-center"
             style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.35) 0%, rgba(236,72,153,0.25) 100%)',
-              border: '1px solid rgba(124,58,237,0.40)',
+              background: 'linear-gradient(135deg, rgba(95,111,46,0.35) 0%, rgba(181,148,74,0.25) 100%)',
+              border: '1px solid rgba(95,111,46,0.40)',
             }}
           >
             <StarIcon className="w-10 h-10 text-gold-400 mx-auto mb-4" />
             <h2 className="text-3xl font-black text-white mb-3">
               Ready to elevate your experience?
             </h2>
-            <p className="text-violet-300 mb-8 max-w-lg mx-auto">
+            <p className="text-venus-300 mb-8 max-w-lg mx-auto">
               Join hundreds of clients who trust AlphaBooking for premium, stress-free scheduling.
             </p>
             <Link to="/booking" className="btn-venus px-10 py-4 text-base rounded-2xl">
@@ -222,16 +222,16 @@ export function App() {
           <div className="flex items-center gap-2">
             <div
               className="w-6 h-6 rounded-md"
-              style={{ background: 'linear-gradient(135deg, #7C3AED, #EC4899)' }}
+              style={{ background: 'linear-gradient(135deg, #5F6F2E, #B5944A)' }}
             />
             <span className="text-white font-bold text-sm">AlphaBooking</span>
           </div>
-          <p className="text-violet-400 text-xs">
+          <p className="text-venus-400 text-xs">
             &copy; {new Date().getFullYear()} AlphaBooking. All rights reserved.
           </p>
-          <div className="flex gap-4 text-xs text-violet-400">
-            <Link to="/booking" className="hover:text-violet-200 transition-colors">Book Now</Link>
-            <Link to="/admin" className="hover:text-violet-200 transition-colors">Admin</Link>
+          <div className="flex gap-4 text-xs text-venus-400">
+            <Link to="/booking" className="hover:text-venus-200 transition-colors">Book Now</Link>
+            <Link to="/admin" className="hover:text-venus-200 transition-colors">Admin</Link>
           </div>
         </div>
       </footer>

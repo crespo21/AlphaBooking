@@ -46,7 +46,7 @@ export const ServiceManagement: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-black text-white mb-1">Services</h1>
-          <p className="text-violet-400 text-sm">Manage the treatments you offer.</p>
+          <p className="text-venus-400 text-sm">Manage the treatments you offer.</p>
         </div>
         <button onClick={openAdd} className="btn-venus text-sm">
           <PlusIcon className="w-4 h-4" />
@@ -62,7 +62,7 @@ export const ServiceManagement: React.FC = () => {
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                   {['Service', 'Duration', 'Price', ''].map((h) => (
-                    <th key={h} className="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-violet-400">{h}</th>
+                    <th key={h} className="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-venus-400">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -76,18 +76,18 @@ export const ServiceManagement: React.FC = () => {
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ background: 'rgba(124,58,237,0.20)' }}>
+                          style={{ background: 'rgba(95,111,46,0.20)' }}>
                           <ScissorsIcon className="w-4 h-4 text-venus-400" />
                         </div>
                         <div>
                           <p className="font-bold text-white">{s.name}</p>
-                          <p className="text-xs text-violet-400 mt-0.5">{s.description}</p>
+                          <p className="text-xs text-venus-400 mt-0.5">{s.description}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-violet-300 text-sm">{s.duration} min</td>
+                    <td className="px-5 py-4 text-venus-300 text-sm">{s.duration} min</td>
                     <td className="px-5 py-4">
-                      <span className="font-black text-base" style={{ color: '#FBBF24' }}>
+                      <span className="font-black text-base" style={{ color: '#C9AF6B' }}>
                         ${s.price.toFixed(2)}
                       </span>
                     </td>
@@ -95,13 +95,13 @@ export const ServiceManagement: React.FC = () => {
                       <div className="flex items-center gap-2 justify-end">
                         <button
                           onClick={() => openEdit(s)}
-                          className="p-1.5 rounded-lg text-violet-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors"
+                          className="p-1.5 rounded-lg text-venus-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors"
                         >
                           <PencilIcon className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setServices(services.filter((x) => x.id !== s.id))}
-                          className="p-1.5 rounded-lg text-violet-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                          className="p-1.5 rounded-lg text-venus-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                         >
                           <TrashIcon className="w-4 h-4" />
                         </button>
@@ -110,7 +110,7 @@ export const ServiceManagement: React.FC = () => {
                   </tr>
                 ))}
                 {services.length === 0 && (
-                  <tr><td colSpan={4} className="px-5 py-10 text-center text-violet-500 text-sm">No services yet. Add one!</td></tr>
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-venus-500 text-sm">No services yet. Add one!</td></tr>
                 )}
               </tbody>
             </table>
@@ -123,7 +123,7 @@ export const ServiceManagement: React.FC = () => {
             <div className="card-dark p-6">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="font-bold text-white">{isEditing ? 'Edit Service' : 'New Service'}</h2>
-                <button onClick={cancel} className="text-violet-500 hover:text-violet-300 transition-colors">
+                <button onClick={cancel} className="text-venus-500 hover:text-venus-300 transition-colors">
                   <XIcon className="w-4 h-4" />
                 </button>
               </div>
@@ -150,8 +150,8 @@ export const ServiceManagement: React.FC = () => {
                 </div>
                 <div className="flex gap-2 pt-1">
                   <button type="button" onClick={cancel}
-                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-violet-400 border transition-colors"
-                    style={{ borderColor: 'rgba(124,58,237,0.30)', background: 'transparent' }}>
+                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-venus-400 border transition-colors"
+                    style={{ borderColor: 'rgba(95,111,46,0.30)', background: 'transparent' }}>
                     Cancel
                   </button>
                   <button type="submit" className="flex-1 btn-venus text-sm">
@@ -167,11 +167,11 @@ export const ServiceManagement: React.FC = () => {
               style={{ minHeight: '200px', borderStyle: 'dashed' }}
             >
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
-                style={{ background: 'rgba(124,58,237,0.15)' }}>
+                style={{ background: 'rgba(95,111,46,0.15)' }}>
                 <PlusIcon className="w-6 h-6 text-venus-400" />
               </div>
-              <p className="font-bold text-violet-300 text-sm">Add New Service</p>
-              <p className="text-xs text-violet-500 mt-1">Click to open form</p>
+              <p className="font-bold text-venus-300 text-sm">Add New Service</p>
+              <p className="text-xs text-venus-500 mt-1">Click to open form</p>
             </div>
           )}
         </div>

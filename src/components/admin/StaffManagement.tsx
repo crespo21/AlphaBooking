@@ -49,7 +49,7 @@ export const StaffManagement: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-black text-white mb-1">Staff</h1>
-          <p className="text-violet-400 text-sm">Manage your team and their service capabilities.</p>
+          <p className="text-venus-400 text-sm">Manage your team and their service capabilities.</p>
         </div>
         <button onClick={openAdd} className="btn-venus text-sm">
           <PlusIcon className="w-4 h-4" />
@@ -70,27 +70,27 @@ export const StaffManagement: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-white truncate">{s.name}</p>
                   {s.priceSurcharge > 0 && (
-                    <p className="text-xs font-semibold" style={{ color: '#FBBF24' }}>
+                    <p className="text-xs font-semibold" style={{ color: '#C9AF6B' }}>
                       +${s.priceSurcharge.toFixed(2)} surcharge
                     </p>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => openEdit(s)}
-                    className="p-1.5 rounded-lg text-violet-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors">
+                    className="p-1.5 rounded-lg text-venus-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors">
                     <PencilIcon className="w-3.5 h-3.5" />
                   </button>
                   <button onClick={() => setStaff(staff.filter((x) => x.id !== s.id))}
-                    className="p-1.5 rounded-lg text-violet-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                    className="p-1.5 rounded-lg text-venus-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
                     <TrashIcon className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
-              <p className="text-xs text-violet-400 mb-3 line-clamp-2 leading-relaxed">{s.bio}</p>
+              <p className="text-xs text-venus-400 mb-3 line-clamp-2 leading-relaxed">{s.bio}</p>
               <div className="flex flex-wrap gap-1.5">
                 {s.services.map((id) => (
                   <span key={id} className="px-2 py-0.5 rounded-full text-xs font-semibold"
-                    style={{ background: 'rgba(124,58,237,0.18)', color: '#C4B5FD', border: '1px solid rgba(124,58,237,0.30)' }}>
+                    style={{ background: 'rgba(95,111,46,0.18)', color: '#BAC876', border: '1px solid rgba(95,111,46,0.30)' }}>
                     {serviceName(id)}
                   </span>
                 ))}
@@ -98,7 +98,7 @@ export const StaffManagement: React.FC = () => {
             </div>
           ))}
           {staff.length === 0 && (
-            <div className="card-dark p-10 col-span-2 text-center text-violet-500 text-sm">
+            <div className="card-dark p-10 col-span-2 text-center text-venus-500 text-sm">
               No staff members yet.
             </div>
           )}
@@ -110,7 +110,7 @@ export const StaffManagement: React.FC = () => {
             <div className="card-dark p-6">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="font-bold text-white">{isEditing ? 'Edit Staff' : 'New Staff Member'}</h2>
-                <button onClick={cancel} className="text-violet-500 hover:text-violet-300 transition-colors">
+                <button onClick={cancel} className="text-venus-500 hover:text-venus-300 transition-colors">
                   <XIcon className="w-4 h-4" />
                 </button>
               </div>
@@ -120,7 +120,7 @@ export const StaffManagement: React.FC = () => {
                   <input name="name" value={form.name} onChange={inp} required placeholder="Alex Johnson" className="input-dark" />
                 </div>
                 <div>
-                  <label className="label-dark">Photo URL <span className="normal-case font-normal text-violet-500">(optional)</span></label>
+                  <label className="label-dark">Photo URL <span className="normal-case font-normal text-venus-500">(optional)</span></label>
                   <input name="photo" value={form.photo} onChange={inp} placeholder="https://…" className="input-dark" />
                 </div>
                 <div>
@@ -134,21 +134,21 @@ export const StaffManagement: React.FC = () => {
                 <div>
                   <label className="label-dark">Services</label>
                   <div className="space-y-2 max-h-36 overflow-y-auto rounded-xl p-3"
-                    style={{ background: 'rgba(12,8,24,0.60)', border: '1px solid rgba(45,32,96,0.60)' }}>
+                    style={{ background: 'rgba(12,8,24,0.60)', border: '1px solid rgba(37,43,14,0.60)' }}>
                     {services.map((svc) => (
                       <label key={svc.id} className="flex items-center gap-2.5 cursor-pointer group">
                         <input type="checkbox" checked={form.services.includes(svc.id)}
                           onChange={() => toggleService(svc.id)}
                           className="w-4 h-4 rounded accent-violet-500" />
-                        <span className="text-sm text-violet-300 group-hover:text-white transition-colors">{svc.name}</span>
+                        <span className="text-sm text-venus-300 group-hover:text-white transition-colors">{svc.name}</span>
                       </label>
                     ))}
                   </div>
                 </div>
                 <div className="flex gap-2 pt-1">
                   <button type="button" onClick={cancel}
-                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-violet-400 border transition-colors"
-                    style={{ borderColor: 'rgba(124,58,237,0.30)', background: 'transparent' }}>
+                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-venus-400 border transition-colors"
+                    style={{ borderColor: 'rgba(95,111,46,0.30)', background: 'transparent' }}>
                     Cancel
                   </button>
                   <button type="submit" className="flex-1 btn-venus text-sm">
@@ -162,11 +162,11 @@ export const StaffManagement: React.FC = () => {
               className="card-dark p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-venus-500/50 transition-all"
               style={{ minHeight: '200px', borderStyle: 'dashed' }}>
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
-                style={{ background: 'rgba(124,58,237,0.15)' }}>
+                style={{ background: 'rgba(95,111,46,0.15)' }}>
                 <UserIcon className="w-6 h-6 text-venus-400" />
               </div>
-              <p className="font-bold text-violet-300 text-sm">Add New Staff Member</p>
-              <p className="text-xs text-violet-500 mt-1">Click to open form</p>
+              <p className="font-bold text-venus-300 text-sm">Add New Staff Member</p>
+              <p className="text-xs text-venus-500 mt-1">Click to open form</p>
             </div>
           )}
         </div>

@@ -67,7 +67,7 @@ export const StaffSelection: React.FC = () => {
                     {staff.name}
                   </h3>
                   {staff.priceSurcharge > 0 && (
-                    <p className="text-xs font-semibold" style={{ color: '#F59E0B' }}>
+                    <p className="text-xs font-semibold" style={{ color: '#B5944A' }}>
                       +${staff.priceSurcharge.toFixed(2)} surcharge
                     </p>
                   )}

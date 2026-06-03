@@ -21,7 +21,7 @@ const filterStyle = (active: boolean, color: string) =>
 
 const statusStyle = (status: string) =>
   status === 'confirmed'
-    ? { background: 'rgba(139,92,246,0.18)', color: '#A78BFA', border: '1px solid rgba(139,92,246,0.35)' }
+    ? { background: 'rgba(122,142,59,0.18)', color: '#9BAD55', border: '1px solid rgba(122,142,59,0.35)' }
     : { background: 'rgba(239,68,68,0.15)',  color: '#F87171', border: '1px solid rgba(239,68,68,0.30)' };
 
 export const AppointmentsList: React.FC = () => {
@@ -51,7 +51,7 @@ export const AppointmentsList: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-black text-white mb-1">Appointments</h1>
-          <p className="text-violet-400 text-sm">View and manage all bookings.</p>
+          <p className="text-venus-400 text-sm">View and manage all bookings.</p>
         </div>
 
         {/* Filter pills */}
@@ -61,7 +61,7 @@ export const AppointmentsList: React.FC = () => {
               key={f}
               onClick={() => setFilter(f)}
               className="px-4 py-2 rounded-xl text-xs font-bold capitalize transition-all"
-              style={filterStyle(filter === f, f === 'confirmed' ? '#8B5CF6' : f === 'cancelled' ? '#EF4444' : '#7C6FAB')}
+              style={filterStyle(filter === f, f === 'confirmed' ? '#7A8E3B' : f === 'cancelled' ? '#EF4444' : '#7C6FAB')}
             >
               {f}
             </button>
@@ -71,17 +71,17 @@ export const AppointmentsList: React.FC = () => {
 
       {/* Month navigator */}
       <div className="flex items-center gap-3 mb-6">
-        <CalendarIcon className="w-4 h-4 text-violet-400" />
+        <CalendarIcon className="w-4 h-4 text-venus-400" />
         <button onClick={() => setCurrentMonth((p) => new Date(p.getFullYear(), p.getMonth() - 1, 1))}
-          className="p-1.5 rounded-lg text-violet-400 hover:text-white hover:bg-white/10 transition-colors">
+          className="p-1.5 rounded-lg text-venus-400 hover:text-white hover:bg-white/10 transition-colors">
           <ChevronLeftIcon className="w-4 h-4" />
         </button>
         <span className="text-sm font-bold text-white min-w-[120px] text-center">{format(currentMonth, 'MMMM yyyy')}</span>
         <button onClick={() => setCurrentMonth((p) => new Date(p.getFullYear(), p.getMonth() + 1, 1))}
-          className="p-1.5 rounded-lg text-violet-400 hover:text-white hover:bg-white/10 transition-colors">
+          className="p-1.5 rounded-lg text-venus-400 hover:text-white hover:bg-white/10 transition-colors">
           <ChevronRightIcon className="w-4 h-4" />
         </button>
-        <span className="text-xs text-violet-500 ml-2">{filtered.length} booking{filtered.length !== 1 ? 's' : ''}</span>
+        <span className="text-xs text-venus-500 ml-2">{filtered.length} booking{filtered.length !== 1 ? 's' : ''}</span>
       </div>
 
       {/* Table */}
@@ -91,7 +91,7 @@ export const AppointmentsList: React.FC = () => {
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 {['Date & Time', 'Customer', 'Service', 'Staff', 'Amount', 'Status', ''].map((h) => (
-                  <th key={h} className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-violet-400">{h}</th>
+                  <th key={h} className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-venus-400">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -101,13 +101,13 @@ export const AppointmentsList: React.FC = () => {
                   style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                   <td className="px-4 py-4">
                     <p className="font-semibold text-white text-xs">{b.date}</p>
-                    <p className="text-violet-400 text-xs mt-0.5">{b.time}</p>
+                    <p className="text-venus-400 text-xs mt-0.5">{b.time}</p>
                   </td>
                   <td className="px-4 py-4">
                     <p className="font-semibold text-white text-xs">{b.customerName}</p>
-                    <p className="text-violet-400 text-xs mt-0.5 truncate max-w-[140px]">{b.customerEmail}</p>
+                    <p className="text-venus-400 text-xs mt-0.5 truncate max-w-[140px]">{b.customerEmail}</p>
                   </td>
-                  <td className="px-4 py-4 text-violet-300 text-xs">{serviceName(b.serviceId)}</td>
+                  <td className="px-4 py-4 text-venus-300 text-xs">{serviceName(b.serviceId)}</td>
                   <td className="px-4 py-4">
                     {b.staffId === 'any' ? (
                       <span className="flex items-center gap-1 text-xs font-semibold text-gold-400">
@@ -115,11 +115,11 @@ export const AppointmentsList: React.FC = () => {
                         Unassigned
                       </span>
                     ) : (
-                      <span className="text-violet-300 text-xs">{staffName(b.staffId)}</span>
+                      <span className="text-venus-300 text-xs">{staffName(b.staffId)}</span>
                     )}
                   </td>
                   <td className="px-4 py-4">
-                    <span className="font-black text-sm" style={{ color: '#FBBF24' }}>${b.totalPrice.toFixed(2)}</span>
+                    <span className="font-black text-sm" style={{ color: '#C9AF6B' }}>${b.totalPrice.toFixed(2)}</span>
                   </td>
                   <td className="px-4 py-4">
                     <span className="px-2.5 py-1 rounded-full text-xs font-bold" style={statusStyle(b.status)}>
@@ -129,12 +129,12 @@ export const AppointmentsList: React.FC = () => {
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-1.5 justify-end">
                       <button onClick={() => setSelected(b)}
-                        className="p-1.5 rounded-lg text-violet-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors">
+                        className="p-1.5 rounded-lg text-venus-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors">
                         <EyeIcon className="w-4 h-4" />
                       </button>
                       {b.status === 'confirmed' && (
                         <button onClick={() => cancelBooking(b.id)}
-                          className="p-1.5 rounded-lg text-violet-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                          className="p-1.5 rounded-lg text-venus-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
                           <BanIcon className="w-4 h-4" />
                         </button>
                       )}
@@ -142,7 +142,7 @@ export const AppointmentsList: React.FC = () => {
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan={7} className="py-12 text-center text-violet-500 text-sm">No appointments found.</td></tr>
+                <tr><td colSpan={7} className="py-12 text-center text-venus-500 text-sm">No appointments found.</td></tr>
               )}
             </tbody>
           </table>
