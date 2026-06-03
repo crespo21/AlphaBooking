@@ -1,248 +1,224 @@
 import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { CalendarIcon, FilterIcon, DownloadIcon } from 'lucide-react';
-const revenueData = [{
-  name: 'Jan',
-  revenue: 4000,
-  cancelled: 400
-}, {
-  name: 'Feb',
-  revenue: 3000,
-  cancelled: 300
-}, {
-  name: 'Mar',
-  revenue: 5000,
-  cancelled: 200
-}, {
-  name: 'Apr',
-  revenue: 2780,
-  cancelled: 250
-}, {
-  name: 'May',
-  revenue: 4890,
-  cancelled: 350
-}, {
-  name: 'Jun',
-  revenue: 3390,
-  cancelled: 180
-}, {
-  name: 'Jul',
-  revenue: 6490,
-  cancelled: 220
-}];
-const staffPerformanceData = [{
-  name: 'Alex Johnson',
-  appointments: 45,
-  revenue: 3200
-}, {
-  name: 'Sam Rivera',
-  appointments: 32,
-  revenue: 2100
-}, {
-  name: 'Jordan Taylor',
-  appointments: 38,
-  revenue: 2800
-}];
-const serviceDistributionData = [{
-  name: 'Basic Haircut',
-  value: 60
-}, {
-  name: 'Premium Styling',
-  value: 25
-}, {
-  name: 'Beard Trim',
-  value: 15
-}];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell,
+} from 'recharts';
+import { DownloadIcon, TrendingUpIcon, TrendingDownIcon, FilterIcon } from 'lucide-react';
+
+const revenueData = [
+  { name: 'Jan', revenue: 4000, cancelled: 400 },
+  { name: 'Feb', revenue: 3000, cancelled: 300 },
+  { name: 'Mar', revenue: 5200, cancelled: 200 },
+  { name: 'Apr', revenue: 2780, cancelled: 250 },
+  { name: 'May', revenue: 4890, cancelled: 350 },
+  { name: 'Jun', revenue: 3390, cancelled: 180 },
+  { name: 'Jul', revenue: 6490, cancelled: 220 },
+];
+
+const staffPerf = [
+  { name: 'Alex J.',   appointments: 45, revenue: 3200 },
+  { name: 'Sam R.',    appointments: 32, revenue: 2100 },
+  { name: 'Jordan T.', appointments: 38, revenue: 2800 },
+];
+
+const serviceDistribution = [
+  { name: 'Basic Haircut',    value: 60 },
+  { name: 'Premium Styling',  value: 25 },
+  { name: 'Beard Trim',       value: 15 },
+];
+
+const VENUS_COLORS = ['#8B5CF6', '#EC4899', '#FBBF24', '#06B6D4'];
+
+const kpis = [
+  { label: 'Total Revenue',     value: '$28,550', change: '+12%', up: true  },
+  { label: 'Total Appointments', value: '245',    change: '+8%',  up: true  },
+  { label: 'Avg. Daily Revenue', value: '$921',   change: '+5%',  up: true  },
+];
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="rounded-xl p-3 text-sm" style={{ background: '#1A1030', border: '1px solid rgba(124,58,237,0.40)', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}>
+      <p className="font-bold text-white mb-2">{label}</p>
+      {payload.map((p: any) => (
+        <p key={p.name} style={{ color: p.color }} className="font-medium">
+          {p.name}: {typeof p.value === 'number' && p.name.includes('evenue') ? `$${p.value.toLocaleString()}` : p.value}
+        </p>
+      ))}
+    </div>
+  );
+};
+
+const axisStyle = { fill: '#7C6FAB', fontSize: 11, fontWeight: 600 };
+
 export const Reports: React.FC = () => {
   const [dateRange, setDateRange] = useState('month');
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [endDate, setEndDate]     = useState('');
   const [staffFilter, setStaffFilter] = useState('all');
-  return <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Business Reports</h1>
-        <button className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          <DownloadIcon className="w-4 h-4 mr-2" />
-          Export Reports
+
+  return (
+    <div className="animate-fadeIn">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-black text-white mb-1">Reports</h1>
+          <p className="text-violet-400 text-sm">Business performance at a glance.</p>
+        </div>
+        <button className="btn-venus text-sm">
+          <DownloadIcon className="w-4 h-4" />
+          Export CSV
         </button>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date Range
-            </label>
-            <div className="flex items-center space-x-2">
-              <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="p-2 border border-gray-300 rounded-md">
-                <option value="day">Day</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="year">Year</option>
-                <option value="custom">Custom Range</option>
-              </select>
-              {dateRange === 'custom' && <>
-                  <div className="flex items-center">
-                    <CalendarIcon className="w-4 h-4 mr-1 text-gray-500" />
-                    <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="p-2 border border-gray-300 rounded-md" />
-                  </div>
-                  <span>to</span>
-                  <div className="flex items-center">
-                    <CalendarIcon className="w-4 h-4 mr-1 text-gray-500" />
-                    <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="p-2 border border-gray-300 rounded-md" />
-                  </div>
-                </>}
+
+      {/* Filters */}
+      <div className="section-dark mb-6 flex flex-wrap items-end gap-4">
+        <div>
+          <label className="label-dark">Date Range</label>
+          <select value={dateRange} onChange={(e) => setDateRange(e.target.value)} className="input-dark">
+            {['day', 'week', 'month', 'year', 'custom'].map((v) => (
+              <option key={v} value={v} className="capitalize">{v.charAt(0).toUpperCase() + v.slice(1)}</option>
+            ))}
+          </select>
+        </div>
+        {dateRange === 'custom' && (
+          <>
+            <div>
+              <label className="label-dark">From</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="input-dark" />
+            </div>
+            <div>
+              <label className="label-dark">To</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="input-dark" />
+            </div>
+          </>
+        )}
+        <div>
+          <label className="label-dark">Staff</label>
+          <select value={staffFilter} onChange={(e) => setStaffFilter(e.target.value)} className="input-dark">
+            <option value="all">All Staff</option>
+            <option value="staff-1">Alex Johnson</option>
+            <option value="staff-2">Sam Rivera</option>
+            <option value="staff-3">Jordan Taylor</option>
+          </select>
+        </div>
+        <button className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-semibold text-violet-300 transition-colors hover:text-white"
+          style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.30)' }}>
+          <FilterIcon className="w-4 h-4" />
+          Apply
+        </button>
+      </div>
+
+      {/* KPI cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        {kpis.map(({ label, value, change, up }) => (
+          <div key={label} className="card-dark p-5">
+            <p className="text-xs font-bold uppercase tracking-wider text-violet-400 mb-2">{label}</p>
+            <p className="text-3xl font-black text-white mb-1">{value}</p>
+            <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: up ? '#4ADE80' : '#F87171' }}>
+              {up ? <TrendingUpIcon className="w-3.5 h-3.5" /> : <TrendingDownIcon className="w-3.5 h-3.5" />}
+              {change} vs previous period
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Staff Member
-            </label>
-            <select value={staffFilter} onChange={e => setStaffFilter(e.target.value)} className="p-2 border border-gray-300 rounded-md">
-              <option value="all">All Staff</option>
-              <option value="staff-1">Alex Johnson</option>
-              <option value="staff-2">Sam Rivera</option>
-              <option value="staff-3">Jordan Taylor</option>
-            </select>
-          </div>
-          <button className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 mt-auto">
-            <FilterIcon className="w-4 h-4 mr-1" />
-            Apply Filters
-          </button>
-        </div>
+        ))}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-2">Total Revenue</h3>
-          <p className="text-3xl font-bold text-green-600">$28,550</p>
-          <p className="text-sm text-gray-500">+12% from previous period</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-2">Total Appointments</h3>
-          <p className="text-3xl font-bold">245</p>
-          <p className="text-sm text-gray-500">+8% from previous period</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-2">Avg. Daily Revenue</h3>
-          <p className="text-3xl font-bold">$921</p>
-          <p className="text-sm text-gray-500">+5% from previous period</p>
-        </div>
-      </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Revenue Overview</h2>
-        <div className="h-80">
+
+      {/* Revenue bar chart */}
+      <div className="section-dark mb-6">
+        <h2 className="font-bold text-white mb-5">Revenue Overview</h2>
+        <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={revenueData} margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5
-          }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="revenue" fill="#4F46E5" name="Revenue" />
-              <Bar dataKey="cancelled" fill="#EF4444" name="Cancelled" />
+            <BarChart data={revenueData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(124,58,237,0.12)" />
+              <XAxis dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} />
+              <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend wrapperStyle={{ color: '#A78BFA', fontSize: '11px', fontWeight: 600 }} />
+              <Bar dataKey="revenue"   fill="#8B5CF6" name="Revenue ($)" radius={[4,4,0,0]} />
+              <Bar dataKey="cancelled" fill="#EC4899" name="Cancelled ($)" radius={[4,4,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Staff + Pie */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-4">Staff Performance</h2>
-          <div className="h-80">
+        <div className="section-dark">
+          <h2 className="font-bold text-white mb-5">Staff Performance</h2>
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={staffPerformanceData} margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5
-            }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis yAxisId="left" orientation="left" stroke="#4F46E5" />
-                <YAxis yAxisId="right" orientation="right" stroke="#10B981" />
-                <Tooltip />
-                <Legend />
-                <Line yAxisId="left" type="monotone" dataKey="appointments" stroke="#4F46E5" name="Appointments" />
-                <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="#10B981" name="Revenue ($)" />
+              <LineChart data={staffPerf} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(124,58,237,0.12)" />
+                <XAxis dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="l" orientation="left"  tick={axisStyle} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="r" orientation="right" tick={axisStyle} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ color: '#A78BFA', fontSize: '11px', fontWeight: 600 }} />
+                <Line yAxisId="l" type="monotone" dataKey="appointments" stroke="#8B5CF6" name="Appointments" strokeWidth={2} dot={{ fill: '#8B5CF6', r: 4 }} />
+                <Line yAxisId="r" type="monotone" dataKey="revenue" stroke="#FBBF24" name="Revenue ($)" strokeWidth={2} dot={{ fill: '#FBBF24', r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-4">Service Distribution</h2>
-          <div className="h-80">
+
+        <div className="section-dark">
+          <h2 className="font-bold text-white mb-5">Service Mix</h2>
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={serviceDistributionData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" label={({
-                name,
-                percent
-              }) => `${name}: ${(percent * 100).toFixed(0)}%`}>
-                  {serviceDistributionData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+                <Pie data={serviceDistribution} cx="50%" cy="50%" outerRadius={85} dataKey="value"
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  labelLine={{ stroke: 'rgba(167,139,250,0.40)' }}>
+                  {serviceDistribution.map((_, i) => (
+                    <Cell key={i} fill={VENUS_COLORS[i % VENUS_COLORS.length]} />
+                  ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ color: '#A78BFA', fontSize: '11px', fontWeight: 600 }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <h2 className="text-xl font-semibold mb-4">Monthly Trends</h2>
+
+      {/* Monthly trends table */}
+      <div className="section-dark">
+        <h2 className="font-bold text-white mb-5">Monthly Breakdown</h2>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Month
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Appointments
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Revenue
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Avg. Per Day
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cancelled
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Growth
-                </th>
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                {['Month', 'Appointments', 'Revenue', 'Avg/Day', 'Cancelled', 'Growth'].map((h) => (
+                  <th key={h} className="pb-3 px-3 text-left text-xs font-bold uppercase tracking-wider text-violet-400">{h}</th>
+                ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {revenueData.map(month => <tr key={month.name}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {month.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {Math.floor(month.revenue / 100)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${month.revenue}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${Math.floor(month.revenue / 30)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${month.cancelled}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${month.name === 'Mar' || month.name === 'May' || month.name === 'Jul' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {month.name === 'Mar' || month.name === 'May' || month.name === 'Jul' ? '+' : '-'}
-                      {Math.floor(Math.random() * 10) + 1}%
-                    </span>
-                  </td>
-                </tr>)}
+            <tbody>
+              {revenueData.map((m, i) => {
+                const isUp = ['Mar', 'May', 'Jul'].includes(m.name);
+                const pct  = (i * 3 + 4);
+                return (
+                  <tr key={m.name} className="transition-colors hover:bg-white/[0.03]"
+                    style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <td className="py-3 px-3 font-bold text-white">{m.name}</td>
+                    <td className="py-3 px-3 text-violet-300">{Math.floor(m.revenue / 100)}</td>
+                    <td className="py-3 px-3 font-semibold" style={{ color: '#FBBF24' }}>${m.revenue.toLocaleString()}</td>
+                    <td className="py-3 px-3 text-violet-300">${Math.floor(m.revenue / 30)}</td>
+                    <td className="py-3 px-3 text-violet-400">${m.cancelled}</td>
+                    <td className="py-3 px-3">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                        style={isUp
+                          ? { background: 'rgba(34,197,94,0.15)', color: '#4ADE80', border: '1px solid rgba(34,197,94,0.30)' }
+                          : { background: 'rgba(239,68,68,0.12)',  color: '#F87171', border: '1px solid rgba(239,68,68,0.25)' }}>
+                        {isUp ? `+${pct}%` : `-${pct}%`}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };

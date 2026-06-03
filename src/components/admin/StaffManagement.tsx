@@ -1,208 +1,176 @@
 import React, { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon } from 'lucide-react';
-import mockStaff from '../../data/mockStaff.json';
+import { PlusIcon, PencilIcon, TrashIcon, UserIcon, XIcon } from 'lucide-react';
+import mockStaff    from '../../data/mockStaff.json';
 import mockServices from '../../data/mockServices.json';
-interface Staff {
-  id: string;
-  name: string;
-  photo: string;
-  bio: string;
-  services: string[];
-  priceSurcharge: number;
-}
-interface Service {
-  id: string;
-  name: string;
-}
+
+interface Staff { id: string; name: string; photo: string; bio: string; services: string[]; priceSurcharge: number }
+interface Service { id: string; name: string }
+
+const blank = { name: '', photo: '', bio: '', services: [] as string[], priceSurcharge: '0' };
+
 export const StaffManagement: React.FC = () => {
-  const [staff, setStaff] = useState<Staff[]>(mockStaff);
+  const [staff, setStaff]         = useState<Staff[]>(mockStaff);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentStaff, setCurrentStaff] = useState<Staff | null>(null);
-  const initialFormState = {
-    name: '',
-    photo: '',
-    bio: '',
-    services: [] as string[],
-    priceSurcharge: '0'
+  const [current, setCurrent]     = useState<Staff | null>(null);
+  const [form, setForm]           = useState(blank);
+  const [showForm, setShowForm]   = useState(false);
+
+  const services: Service[] = mockServices;
+
+  const openAdd = () => { setIsEditing(false); setCurrent(null); setForm(blank); setShowForm(true); };
+  const openEdit = (s: Staff) => {
+    setIsEditing(true); setCurrent(s);
+    setForm({ name: s.name, photo: s.photo, bio: s.bio, services: s.services, priceSurcharge: String(s.priceSurcharge) });
+    setShowForm(true);
   };
-  const [formData, setFormData] = useState(initialFormState);
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const {
-      name,
-      value
-    } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-  const handleServiceChange = (serviceId: string) => {
-    if (formData.services.includes(serviceId)) {
-      setFormData({
-        ...formData,
-        services: formData.services.filter(id => id !== serviceId)
-      });
-    } else {
-      setFormData({
-        ...formData,
-        services: [...formData.services, serviceId]
-      });
-    }
-  };
-  const handleEditClick = (staffMember: Staff) => {
-    setIsEditing(true);
-    setCurrentStaff(staffMember);
-    setFormData({
-      name: staffMember.name,
-      photo: staffMember.photo,
-      bio: staffMember.bio,
-      services: staffMember.services,
-      priceSurcharge: staffMember.priceSurcharge.toString()
-    });
-  };
-  const handleDeleteClick = (staffId: string) => {
-    // In a real app, this would make an API call
-    setStaff(staff.filter(staffMember => staffMember.id !== staffId));
-  };
-  const handleAddNewClick = () => {
-    setIsEditing(false);
-    setCurrentStaff(null);
-    setFormData(initialFormState);
-  };
+  const cancel = () => { setShowForm(false); setForm(blank); setCurrent(null); setIsEditing(false); };
+
+  const toggleService = (id: string) =>
+    setForm((p) => ({ ...p, services: p.services.includes(id) ? p.services.filter((x) => x !== id) : [...p.services, id] }));
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newStaffMember = {
-      id: currentStaff ? currentStaff.id : `staff-${Date.now()}`,
-      name: formData.name,
-      photo: formData.photo || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
-      bio: formData.bio,
-      services: formData.services,
-      priceSurcharge: parseFloat(formData.priceSurcharge)
+    const s: Staff = {
+      id: current?.id ?? `staff-${Date.now()}`,
+      name: form.name, photo: form.photo || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80',
+      bio: form.bio, services: form.services, priceSurcharge: parseFloat(form.priceSurcharge),
     };
-    if (isEditing && currentStaff) {
-      // Update existing staff member
-      setStaff(staff.map(staffMember => staffMember.id === currentStaff.id ? newStaffMember : staffMember));
-    } else {
-      // Add new staff member
-      setStaff([...staff, newStaffMember]);
-    }
-    // Reset form
-    setFormData(initialFormState);
-    setIsEditing(false);
-    setCurrentStaff(null);
+    setStaff(isEditing ? staff.map((x) => (x.id === s.id ? s : x)) : [...staff, s]);
+    cancel();
   };
-  const getServiceNameById = (serviceId: string): string => {
-    const service = mockServices.find(s => s.id === serviceId);
-    return service ? service.name : 'Unknown Service';
-  };
-  return <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Staff Management</h1>
-        <button onClick={handleAddNewClick} className="flex items-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-          <PlusIcon className="w-4 h-4 mr-1" />
-          Add New Staff
+
+  const inp = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  const serviceName = (id: string) => services.find((s) => s.id === id)?.name ?? id;
+
+  return (
+    <div className="animate-fadeIn">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-black text-white mb-1">Staff</h1>
+          <p className="text-violet-400 text-sm">Manage your team and their service capabilities.</p>
+        </div>
+        <button onClick={openAdd} className="btn-venus text-sm">
+          <PlusIcon className="w-4 h-4" />
+          Add Staff
         </button>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-              {staff.map(staffMember => <div key={staffMember.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center mb-3">
-                    <img src={staffMember.photo} alt={staffMember.name} className="w-12 h-12 rounded-full object-cover mr-3" />
-                    <div>
-                      <h3 className="font-medium">{staffMember.name}</h3>
-                      {staffMember.priceSurcharge > 0 && <p className="text-xs text-gray-500">
-                          +${staffMember.priceSurcharge.toFixed(2)} surcharge
-                        </p>}
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-3">
-                    {staffMember.bio}
-                  </p>
-                  <div className="mb-3">
-                    <h4 className="text-xs font-medium text-gray-500 mb-1">
-                      Services:
-                    </h4>
-                    <div className="flex flex-wrap gap-1">
-                      {staffMember.services.map(serviceId => <span key={serviceId} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                          {getServiceNameById(serviceId)}
-                        </span>)}
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <button onClick={() => handleEditClick(staffMember)} className="text-blue-600 hover:text-blue-900">
-                      <PencilIcon className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => handleDeleteClick(staffMember.id)} className="text-red-600 hover:text-red-900">
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>)}
-            </div>
-          </div>
-        </div>
-        <div className="lg:col-span-1">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">
-              {isEditing ? 'Edit Staff Member' : 'Add New Staff Member'}
-            </h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md" required />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-1">
-                  Photo URL
-                </label>
-                <input type="text" id="photo" name="photo" value={formData.photo} onChange={handleInputChange} placeholder="https://example.com/photo.jpg" className="w-full p-2 border border-gray-300 rounded-md" />
-                <p className="text-xs text-gray-500 mt-1">
-                  Leave blank for default avatar
-                </p>
-              </div>
-              <div className="mb-4">
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-                  Bio/Description
-                </label>
-                <textarea id="bio" name="bio" value={formData.bio} onChange={handleInputChange} rows={3} className="w-full p-2 border border-gray-300 rounded-md" required />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="priceSurcharge" className="block text-sm font-medium text-gray-700 mb-1">
-                  Price Surcharge ($)
-                </label>
-                <input type="number" id="priceSurcharge" name="priceSurcharge" value={formData.priceSurcharge} onChange={handleInputChange} min="0" step="0.01" className="w-full p-2 border border-gray-300 rounded-md" required />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Services
-                </label>
-                <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2">
-                  {mockServices.map(service => <div key={service.id} className="flex items-center">
-                      <input type="checkbox" id={`service-${service.id}`} checked={formData.services.includes(service.id)} onChange={() => handleServiceChange(service.id)} className="mr-2" />
-                      <label htmlFor={`service-${service.id}`} className="text-sm">
-                        {service.name}
-                      </label>
-                    </div>)}
+        {/* ── Staff cards ── */}
+        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {staff.map((s) => (
+            <div key={s.id} className="card-dark p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <img
+                  src={s.photo} alt={s.name}
+                  className="w-12 h-12 rounded-full object-cover ring-2 ring-venus-500/40"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-white truncate">{s.name}</p>
+                  {s.priceSurcharge > 0 && (
+                    <p className="text-xs font-semibold" style={{ color: '#FBBF24' }}>
+                      +${s.priceSurcharge.toFixed(2)} surcharge
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => openEdit(s)}
+                    className="p-1.5 rounded-lg text-violet-400 hover:text-venus-300 hover:bg-venus-500/10 transition-colors">
+                    <PencilIcon className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => setStaff(staff.filter((x) => x.id !== s.id))}
+                    className="p-1.5 rounded-lg text-violet-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                    <TrashIcon className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
-              <div className="flex justify-end space-x-2">
-                <button type="button" onClick={() => {
-                setFormData(initialFormState);
-                setIsEditing(false);
-                setCurrentStaff(null);
-              }} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                  {isEditing ? 'Update Staff' : 'Add Staff'}
+              <p className="text-xs text-violet-400 mb-3 line-clamp-2 leading-relaxed">{s.bio}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {s.services.map((id) => (
+                  <span key={id} className="px-2 py-0.5 rounded-full text-xs font-semibold"
+                    style={{ background: 'rgba(124,58,237,0.18)', color: '#C4B5FD', border: '1px solid rgba(124,58,237,0.30)' }}>
+                    {serviceName(id)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+          {staff.length === 0 && (
+            <div className="card-dark p-10 col-span-2 text-center text-violet-500 text-sm">
+              No staff members yet.
+            </div>
+          )}
+        </div>
+
+        {/* ── Form ── */}
+        <div className="lg:col-span-1">
+          {showForm ? (
+            <div className="card-dark p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="font-bold text-white">{isEditing ? 'Edit Staff' : 'New Staff Member'}</h2>
+                <button onClick={cancel} className="text-violet-500 hover:text-violet-300 transition-colors">
+                  <XIcon className="w-4 h-4" />
                 </button>
               </div>
-            </form>
-          </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="label-dark">Full Name</label>
+                  <input name="name" value={form.name} onChange={inp} required placeholder="Alex Johnson" className="input-dark" />
+                </div>
+                <div>
+                  <label className="label-dark">Photo URL <span className="normal-case font-normal text-violet-500">(optional)</span></label>
+                  <input name="photo" value={form.photo} onChange={inp} placeholder="https://…" className="input-dark" />
+                </div>
+                <div>
+                  <label className="label-dark">Bio</label>
+                  <textarea name="bio" value={form.bio} onChange={inp} required rows={3} placeholder="Short bio…" className="input-dark resize-none" />
+                </div>
+                <div>
+                  <label className="label-dark">Surcharge ($)</label>
+                  <input name="priceSurcharge" type="number" min="0" step="0.01" value={form.priceSurcharge} onChange={inp} required className="input-dark" />
+                </div>
+                <div>
+                  <label className="label-dark">Services</label>
+                  <div className="space-y-2 max-h-36 overflow-y-auto rounded-xl p-3"
+                    style={{ background: 'rgba(12,8,24,0.60)', border: '1px solid rgba(45,32,96,0.60)' }}>
+                    {services.map((svc) => (
+                      <label key={svc.id} className="flex items-center gap-2.5 cursor-pointer group">
+                        <input type="checkbox" checked={form.services.includes(svc.id)}
+                          onChange={() => toggleService(svc.id)}
+                          className="w-4 h-4 rounded accent-violet-500" />
+                        <span className="text-sm text-violet-300 group-hover:text-white transition-colors">{svc.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button type="button" onClick={cancel}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-violet-400 border transition-colors"
+                    style={{ borderColor: 'rgba(124,58,237,0.30)', background: 'transparent' }}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="flex-1 btn-venus text-sm">
+                    {isEditing ? 'Save' : 'Add'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          ) : (
+            <div onClick={openAdd}
+              className="card-dark p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-venus-500/50 transition-all"
+              style={{ minHeight: '200px', borderStyle: 'dashed' }}>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-3"
+                style={{ background: 'rgba(124,58,237,0.15)' }}>
+                <UserIcon className="w-6 h-6 text-venus-400" />
+              </div>
+              <p className="font-bold text-violet-300 text-sm">Add New Staff Member</p>
+              <p className="text-xs text-violet-500 mt-1">Click to open form</p>
+            </div>
+          )}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };

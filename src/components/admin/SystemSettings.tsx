@@ -1,108 +1,128 @@
 import React, { useState } from 'react';
-import { SaveIcon } from 'lucide-react';
+import { SaveIcon, BellIcon, CreditCardIcon, CalendarIcon, GlobeIcon } from 'lucide-react';
+
 export const SystemSettings: React.FC = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
-  const [smsNotifications, setSmsNotifications] = useState(false);
-  const [reminderTime, setReminderTime] = useState('24');
-  const [paymentGateway, setPaymentGateway] = useState('stripe');
+  const [smsNotifications, setSmsNotifications]     = useState(false);
+  const [reminderTime, setReminderTime]             = useState('24');
+  const [paymentGateway, setPaymentGateway]         = useState('stripe');
   const [cancellationPolicy, setCancellationPolicy] = useState('24');
-  const [currency, setCurrency] = useState('USD');
-  const [timezone, setTimezone] = useState('America/New_York');
-  const handleSaveSettings = () => {
-    // In a real app, this would make an API call
-    alert('Settings saved successfully!');
-  };
-  return <div className="w-full">
-      <h1 className="text-3xl font-bold mb-6">System Settings</h1>
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
-        <div className="space-y-4">
-          <div className="flex items-center">
-            <input type="checkbox" id="emailNotifications" checked={emailNotifications} onChange={e => setEmailNotifications(e.target.checked)} className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-            <label htmlFor="emailNotifications" className="ml-2 text-gray-700">
-              Enable email notifications
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input type="checkbox" id="smsNotifications" checked={smsNotifications} onChange={e => setSmsNotifications(e.target.checked)} className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-            <label htmlFor="smsNotifications" className="ml-2 text-gray-700">
-              Enable SMS notifications (additional charges may apply)
-            </label>
-          </div>
-          <div>
-            <label htmlFor="reminderTime" className="block text-sm font-medium text-gray-700 mb-1">
-              Send appointment reminders
-            </label>
-            <select id="reminderTime" value={reminderTime} onChange={e => setReminderTime(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
-              <option value="1">1 hour before</option>
-              <option value="2">2 hours before</option>
-              <option value="24">24 hours before</option>
-              <option value="48">48 hours before</option>
-            </select>
-          </div>
+  const [currency, setCurrency]                     = useState('USD');
+  const [timezone, setTimezone]                     = useState('America/New_York');
+  const [saved, setSaved]                           = useState(false);
+
+  const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
+
+  const Toggle = ({ id, checked, onChange, label, sub }: { id: string; checked: boolean; onChange: (v: boolean) => void; label: string; sub?: string }) => (
+    <div className="flex items-center justify-between py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div>
+        <p className="text-sm font-semibold text-white">{label}</p>
+        {sub && <p className="text-xs text-violet-500 mt-0.5">{sub}</p>}
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange(!checked)}
+        className="relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0"
+        style={{ background: checked ? '#7C3AED' : 'rgba(45,32,96,0.80)' }}
+      >
+        <span className="absolute top-0.5 inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-200"
+          style={{ transform: checked ? 'translateX(20px)' : 'translateX(2px)' }} />
+      </button>
+    </div>
+  );
+
+  const SelectField = ({ label, value, onChange, options }: {
+    label: string; value: string; onChange: (v: string) => void;
+    options: { value: string; label: string }[];
+  }) => (
+    <div>
+      <label className="label-dark">{label}</label>
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="input-dark">
+        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </div>
+  );
+
+  return (
+    <div className="animate-fadeIn max-w-2xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-white mb-1">System Settings</h1>
+        <p className="text-violet-400 text-sm">Configure notifications, payments, and booking rules.</p>
+      </div>
+
+      {/* Notifications */}
+      <div className="section-dark mb-5">
+        <div className="flex items-center gap-2 mb-4">
+          <BellIcon className="w-4 h-4 text-venus-400" />
+          <h2 className="font-bold text-white">Notifications</h2>
+        </div>
+        <Toggle id="email" checked={emailNotifications} onChange={setEmailNotifications}
+          label="Email notifications" sub="Send booking confirmations and reminders by email" />
+        <Toggle id="sms" checked={smsNotifications} onChange={setSmsNotifications}
+          label="SMS notifications" sub="Additional charges may apply from your SMS provider" />
+        <div className="pt-4">
+          <SelectField label="Reminder timing" value={reminderTime} onChange={setReminderTime} options={[
+            { value: '1',  label: '1 hour before'  },
+            { value: '2',  label: '2 hours before' },
+            { value: '24', label: '24 hours before' },
+            { value: '48', label: '48 hours before' },
+          ]} />
         </div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Payment Settings</h2>
+
+      {/* Payment */}
+      <div className="section-dark mb-5">
+        <div className="flex items-center gap-2 mb-4">
+          <CreditCardIcon className="w-4 h-4 text-venus-400" />
+          <h2 className="font-bold text-white">Payment</h2>
+        </div>
         <div className="space-y-4">
-          <div>
-            <label htmlFor="paymentGateway" className="block text-sm font-medium text-gray-700 mb-1">
-              Payment Gateway
-            </label>
-            <select id="paymentGateway" value={paymentGateway} onChange={e => setPaymentGateway(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
-              <option value="stripe">Stripe</option>
-              <option value="paypal">PayPal</option>
-              <option value="square">Square</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
-              Currency
-            </label>
-            <select id="currency" value={currency} onChange={e => setCurrency(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
-              <option value="USD">USD - US Dollar</option>
-              <option value="EUR">EUR - Euro</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="CAD">CAD - Canadian Dollar</option>
-              <option value="AUD">AUD - Australian Dollar</option>
-            </select>
-          </div>
+          <SelectField label="Payment gateway" value={paymentGateway} onChange={setPaymentGateway} options={[
+            { value: 'stripe',  label: 'Stripe'  },
+            { value: 'paypal',  label: 'PayPal'  },
+            { value: 'square',  label: 'Square'  },
+          ]} />
+          <SelectField label="Currency" value={currency} onChange={setCurrency} options={[
+            { value: 'USD', label: 'USD — US Dollar'        },
+            { value: 'EUR', label: 'EUR — Euro'             },
+            { value: 'GBP', label: 'GBP — British Pound'    },
+            { value: 'CAD', label: 'CAD — Canadian Dollar'  },
+            { value: 'AUD', label: 'AUD — Australian Dollar' },
+          ]} />
         </div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Booking Settings</h2>
+
+      {/* Booking rules */}
+      <div className="section-dark mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <CalendarIcon className="w-4 h-4 text-venus-400" />
+          <h2 className="font-bold text-white">Booking Rules</h2>
+        </div>
         <div className="space-y-4">
-          <div>
-            <label htmlFor="cancellationPolicy" className="block text-sm font-medium text-gray-700 mb-1">
-              Cancellation Policy
-            </label>
-            <select id="cancellationPolicy" value={cancellationPolicy} onChange={e => setCancellationPolicy(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
-              <option value="0">No cancellation allowed</option>
-              <option value="1">Up to 1 hour before</option>
-              <option value="4">Up to 4 hours before</option>
-              <option value="24">Up to 24 hours before</option>
-              <option value="48">Up to 48 hours before</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="timezone" className="block text-sm font-medium text-gray-700 mb-1">
-              Business Timezone
-            </label>
-            <select id="timezone" value={timezone} onChange={e => setTimezone(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
-              <option value="America/New_York">Eastern Time (ET)</option>
-              <option value="America/Chicago">Central Time (CT)</option>
-              <option value="America/Denver">Mountain Time (MT)</option>
-              <option value="America/Los_Angeles">Pacific Time (PT)</option>
-              <option value="Europe/London">London (GMT)</option>
-            </select>
-          </div>
+          <SelectField label="Cancellation policy" value={cancellationPolicy} onChange={setCancellationPolicy} options={[
+            { value: '0',  label: 'No cancellation allowed'  },
+            { value: '1',  label: 'Up to 1 hour before'      },
+            { value: '4',  label: 'Up to 4 hours before'     },
+            { value: '24', label: 'Up to 24 hours before'    },
+            { value: '48', label: 'Up to 48 hours before'    },
+          ]} />
+          <SelectField label="Business timezone" value={timezone} onChange={setTimezone} options={[
+            { value: 'America/New_York',    label: 'Eastern Time (ET)'   },
+            { value: 'America/Chicago',     label: 'Central Time (CT)'   },
+            { value: 'America/Denver',      label: 'Mountain Time (MT)'  },
+            { value: 'America/Los_Angeles', label: 'Pacific Time (PT)'   },
+            { value: 'Europe/London',       label: 'London (GMT)'        },
+          ]} />
         </div>
       </div>
+
       <div className="flex justify-end">
-        <button onClick={handleSaveSettings} className="flex items-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-          <SaveIcon className="w-4 h-4 mr-1" />
-          Save Settings
+        <button onClick={handleSave} className="btn-venus text-sm"
+          style={saved ? { background: 'linear-gradient(135deg, #059669, #047857)' } : {}}>
+          <SaveIcon className="w-4 h-4" />
+          {saved ? 'Saved!' : 'Save Settings'}
         </button>
       </div>
-    </div>;
+    </div>
+  );
 };
