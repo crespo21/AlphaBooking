@@ -134,12 +134,12 @@ export const StaffManagement: React.FC = () => {
                 <div>
                   <label className="label-dark">Services</label>
                   <div className="space-y-2 max-h-36 overflow-y-auto rounded-xl p-3"
-                    style={{ background: 'rgba(12,8,24,0.60)', border: '1px solid rgba(37,43,14,0.60)' }}>
+                    style={{ background: 'rgba(28,31,10,0.80)', border: '1px solid rgba(95,111,46,0.35)' }}>
                     {services.map((svc) => (
                       <label key={svc.id} className="flex items-center gap-2.5 cursor-pointer group">
                         <input type="checkbox" checked={form.services.includes(svc.id)}
                           onChange={() => toggleService(svc.id)}
-                          className="w-4 h-4 rounded accent-violet-500" />
+                          className="w-4 h-4 rounded accent-venus-600" />
                         <span className="text-sm text-venus-300 group-hover:text-white transition-colors">{svc.name}</span>
                       </label>
                     ))}

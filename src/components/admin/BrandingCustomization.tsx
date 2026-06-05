@@ -15,7 +15,7 @@ const defaultHours: Record<DayKey, DayHours> = {
   sunday:    { open: '10:00', close: '15:00', isOpen: false },
 };
 
-const VENUS_PRESETS = ['#5F6F2E', '#B5944A', '#06B6D4', '#10B981', '#B5944A', '#EF4444'];
+const VENUS_PRESETS = ['#5F6F2E', '#7A8E3B', '#B5944A', '#DDCA8F', '#06B6D4', '#EF4444'];
 
 export const BrandingCustomization: React.FC = () => {
   const [previewColor, setPreviewColor]       = useState('#5F6F2E');
