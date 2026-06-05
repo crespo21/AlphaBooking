@@ -12,15 +12,15 @@ export const BookingSummary: React.FC = () => {
     <div
       className="rounded-2xl p-5 sticky top-24"
       style={{
-        background: 'linear-gradient(135deg, #0F0A1E 0%, #1A1030 100%)',
-        border: '1px solid rgba(124,58,237,0.35)',
+        background: 'linear-gradient(135deg, #151508 0%, #1C1F0A 100%)',
+        border: '1px solid rgba(95,111,46,0.35)',
         boxShadow: '0 8px 40px rgba(0,0,0,0.35)',
       }}
     >
       <div className="flex items-center gap-2 mb-5">
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, #7C3AED, #EC4899)' }}
+          style={{ background: 'linear-gradient(135deg, #5F6F2E, #B5944A)' }}
         >
           <SparklesIcon className="w-3.5 h-3.5 text-white" />
         </div>
@@ -28,7 +28,7 @@ export const BookingSummary: React.FC = () => {
       </div>
 
       {isEmpty ? (
-        <p className="text-xs text-violet-400 italic text-center py-4">
+        <p className="text-xs text-venus-400 italic text-center py-4">
           Select a service to see your summary.
         </p>
       ) : (
@@ -36,10 +36,10 @@ export const BookingSummary: React.FC = () => {
           {/* Service */}
           {selectedService && (
             <div className="p-3.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.06)' }}>
-              <p className="text-xs font-semibold text-violet-400 uppercase tracking-wider mb-1.5">Service</p>
+              <p className="text-xs font-semibold text-venus-400 uppercase tracking-wider mb-1.5">Service</p>
               <p className="font-bold text-white text-sm">{selectedService.name}</p>
-              <p className="text-xs text-violet-300 mt-0.5">{selectedService.duration} minutes</p>
-              <p className="text-base font-black mt-1.5" style={{ color: '#FBBF24' }}>
+              <p className="text-xs text-venus-300 mt-0.5">{selectedService.duration} minutes</p>
+              <p className="text-base font-black mt-1.5" style={{ color: '#C9AF6B' }}>
                 ${selectedService.price.toFixed(2)}
               </p>
             </div>
@@ -48,12 +48,12 @@ export const BookingSummary: React.FC = () => {
           {/* Date & Time */}
           {selectedDate && selectedTime ? (
             <div className="p-3.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.06)' }}>
-              <p className="text-xs font-semibold text-violet-400 uppercase tracking-wider mb-1.5">Appointment</p>
-              <div className="flex items-center gap-1.5 text-xs text-violet-200 mb-1">
+              <p className="text-xs font-semibold text-venus-400 uppercase tracking-wider mb-1.5">Appointment</p>
+              <div className="flex items-center gap-1.5 text-xs text-venus-200 mb-1">
                 <CalendarIcon className="w-3.5 h-3.5" />
                 {format(selectedDate, 'EEE, MMM d, yyyy')}
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-violet-200">
+              <div className="flex items-center gap-1.5 text-xs text-venus-200">
                 <ClockIcon className="w-3.5 h-3.5" />
                 {selectedTime}
               </div>
@@ -63,7 +63,7 @@ export const BookingSummary: React.FC = () => {
           {/* Staff */}
           {selectedStaff && (
             <div className="p-3.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.06)' }}>
-              <p className="text-xs font-semibold text-violet-400 uppercase tracking-wider mb-1.5">Stylist</p>
+              <p className="text-xs font-semibold text-venus-400 uppercase tracking-wider mb-1.5">Stylist</p>
               <div className="flex items-center gap-2">
                 <img
                   src={selectedStaff.photo}
@@ -73,7 +73,7 @@ export const BookingSummary: React.FC = () => {
                 <div>
                   <p className="text-sm font-semibold text-white">{selectedStaff.name}</p>
                   {selectedStaff.priceSurcharge > 0 && (
-                    <p className="text-xs font-medium" style={{ color: '#FBBF24' }}>
+                    <p className="text-xs font-medium" style={{ color: '#C9AF6B' }}>
                       +${selectedStaff.priceSurcharge.toFixed(2)}
                     </p>
                   )}
@@ -85,10 +85,10 @@ export const BookingSummary: React.FC = () => {
           {/* Total */}
           <div
             className="flex items-center justify-between px-4 py-3 rounded-xl"
-            style={{ background: 'rgba(124,58,237,0.20)', border: '1px solid rgba(124,58,237,0.40)' }}
+            style={{ background: 'rgba(95,111,46,0.20)', border: '1px solid rgba(95,111,46,0.40)' }}
           >
-            <span className="text-sm font-bold text-violet-200">Total</span>
-            <span className="text-xl font-black" style={{ color: '#FBBF24' }}>
+            <span className="text-sm font-bold text-venus-200">Total</span>
+            <span className="text-xl font-black" style={{ color: '#C9AF6B' }}>
               ${totalPrice.toFixed(2)}
             </span>
           </div>

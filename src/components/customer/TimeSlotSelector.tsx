@@ -39,7 +39,7 @@ export const TimeSlotSelector: React.FC = () => {
                     ? 'text-white border-transparent shadow-venus'
                     : 'border-gray-200 text-gray-700 bg-white hover:border-venus-400 hover:text-venus-600'
                 }`}
-                style={isSelected ? { background: 'linear-gradient(135deg, #7C3AED, #5B21B6)' } : {}}
+                style={isSelected ? { background: 'linear-gradient(135deg, #5F6F2E, #3D4A1B)' } : {}}
               >
                 {time}
               </button>

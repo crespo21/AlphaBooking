@@ -15,16 +15,16 @@ const kpis = [
     label: 'Upcoming Bookings',
     value: String(confirmedCount),
     sub: 'confirmed appointments',
-    color: '#8B5CF6',
-    bg: 'rgba(139,92,246,0.15)',
+    color: '#7A8E3B',
+    bg: 'rgba(122,142,59,0.15)',
   },
   {
     icon: UsersIcon,
     label: 'Staff Members',
     value: '3',
     sub: 'active stylists',
-    color: '#EC4899',
-    bg: 'rgba(236,72,153,0.15)',
+    color: '#B5944A',
+    bg: 'rgba(181,148,74,0.15)',
   },
   {
     icon: CalendarIcon,
@@ -39,14 +39,14 @@ const kpis = [
     label: 'Working Hours',
     value: 'Mon–Fri',
     sub: '9:00 AM – 5:00 PM',
-    color: '#F59E0B',
+    color: '#B5944A',
     bg: 'rgba(245,158,11,0.15)',
   },
 ];
 
 const statusStyle = (status: string) =>
   status === 'confirmed'
-    ? { background: 'rgba(139,92,246,0.18)', color: '#A78BFA', border: '1px solid rgba(139,92,246,0.35)' }
+    ? { background: 'rgba(122,142,59,0.18)', color: '#9BAD55', border: '1px solid rgba(122,142,59,0.35)' }
     : { background: 'rgba(239,68,68,0.15)',  color: '#F87171', border: '1px solid rgba(239,68,68,0.30)' };
 
 export const Dashboard: React.FC = () => {
@@ -57,7 +57,7 @@ export const Dashboard: React.FC = () => {
       {/* Page header */}
       <div className="mb-8">
         <h1 className="text-3xl font-black text-white mb-1">Admin Dashboard</h1>
-        <p className="text-violet-400 text-sm">Welcome back — here's what's happening today.</p>
+        <p className="text-venus-400 text-sm">Welcome back — here's what's happening today.</p>
       </div>
 
       {/* System status */}
@@ -87,8 +87,8 @@ export const Dashboard: React.FC = () => {
               <TrendingUpIcon className="w-4 h-4 text-green-500" />
             </div>
             <p className="text-3xl font-black text-white mb-0.5">{value}</p>
-            <p className="text-xs font-bold text-violet-300">{label}</p>
-            <p className="text-xs text-violet-500 mt-0.5">{sub}</p>
+            <p className="text-xs font-bold text-venus-300">{label}</p>
+            <p className="text-xs text-venus-500 mt-0.5">{sub}</p>
           </div>
         ))}
       </div>
@@ -110,7 +110,7 @@ export const Dashboard: React.FC = () => {
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 {['Confirmation', 'Customer', 'Service', 'Date & Time', 'Status'].map((h) => (
-                  <th key={h} className="pb-3 px-3 text-left text-xs font-semibold text-violet-400 uppercase tracking-wide">
+                  <th key={h} className="pb-3 px-3 text-left text-xs font-semibold text-venus-400 uppercase tracking-wide">
                     {h}
                   </th>
                 ))}
@@ -125,10 +125,10 @@ export const Dashboard: React.FC = () => {
                     className="transition-colors hover:bg-white/[0.03]"
                     style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                   >
-                    <td className="py-3.5 px-3 font-mono text-xs text-violet-300">{booking.confirmationNumber}</td>
+                    <td className="py-3.5 px-3 font-mono text-xs text-venus-300">{booking.confirmationNumber}</td>
                     <td className="py-3.5 px-3 font-semibold text-white">{booking.customerName}</td>
-                    <td className="py-3.5 px-3 text-violet-300">{service?.name ?? 'Unknown'}</td>
-                    <td className="py-3.5 px-3 text-violet-300">{booking.date} · {booking.time}</td>
+                    <td className="py-3.5 px-3 text-venus-300">{service?.name ?? 'Unknown'}</td>
+                    <td className="py-3.5 px-3 text-venus-300">{booking.date} · {booking.time}</td>
                     <td className="py-3.5 px-3">
                       <span
                         className="px-2.5 py-1 rounded-full text-xs font-bold"
@@ -157,7 +157,7 @@ export const Dashboard: React.FC = () => {
         <button
           onClick={() => navigate('/admin/appointments')}
           className="btn-outline-venus text-sm"
-          style={{ color: '#A78BFA', borderColor: 'rgba(167,139,250,0.50)', background: 'transparent' }}
+          style={{ color: '#9BAD55', borderColor: 'rgba(154,173,85,0.50)', background: 'transparent' }}
         >
           <CalendarIcon className="w-4 h-4" />
           Manage Appointments
@@ -165,7 +165,7 @@ export const Dashboard: React.FC = () => {
         <button
           onClick={() => navigate('/admin/reports')}
           className="btn-outline-venus text-sm ml-auto"
-          style={{ color: '#A78BFA', borderColor: 'rgba(167,139,250,0.50)', background: 'transparent' }}
+          style={{ color: '#9BAD55', borderColor: 'rgba(154,173,85,0.50)', background: 'transparent' }}
         >
           <BarChart2Icon className="w-4 h-4" />
           View Reports

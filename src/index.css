@@ -12,68 +12,63 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  html { scroll-behavior: smooth; }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #F5F3FF;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #8B5CF6;
-    border-radius: 99px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #7C3AED;
-  }
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #F5F0E4; }
+  ::-webkit-scrollbar-thumb { background: #7A8E3B; border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: #5F6F2E; }
 }
 
 @layer components {
+
   /* ── Buttons ── */
   .btn-venus {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white text-sm transition-all duration-200 hover:scale-105 active:scale-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
-    background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
-    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+    background: linear-gradient(135deg, #5F6F2E 0%, #3D4A1B 100%);
+    box-shadow: 0 4px 20px rgba(95, 111, 46, 0.35);
   }
   .btn-venus:hover:not(:disabled) {
-    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.50);
+    box-shadow: 0 8px 30px rgba(95, 111, 46, 0.50);
   }
 
   .btn-venus-pink {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white text-sm transition-all duration-200 hover:scale-105 active:scale-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
-    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35);
+    background: linear-gradient(135deg, #7A8E3B 0%, #B5944A 100%);
+    box-shadow: 0 4px 20px rgba(122, 142, 59, 0.35);
   }
 
   .btn-outline-venus {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-venus-600 text-sm border-2 border-venus-400 bg-white transition-all duration-200 hover:bg-venus-50 hover:shadow-venus disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-venus-700 text-sm border-2 border-venus-500 bg-white transition-all duration-200 hover:bg-venus-50 hover:shadow-venus disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-ghost-light {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-violet-200 text-sm border border-violet-500/40 transition-all duration-200 hover:bg-violet-500/10 hover:border-violet-400;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm border transition-all duration-200;
+    color: #D4D9A3;
+    border-color: rgba(154, 173, 85, 0.40);
+  }
+  .btn-ghost-light:hover {
+    color: #EBE8CF;
+    background: rgba(122, 142, 59, 0.12);
+    border-color: rgba(154, 173, 85, 0.65);
   }
 
   /* ── Cards ── */
   .card-venus {
-    @apply bg-white rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-venus;
+    @apply bg-white rounded-2xl border border-stone-200 shadow-sm transition-all duration-300 hover:shadow-venus;
   }
   .card-venus-selected {
-    @apply bg-venus-50 rounded-2xl border-2 border-venus-500 shadow-venus;
+    @apply bg-venus-50 rounded-2xl border-2 border-venus-600 shadow-venus;
   }
   .card-dark {
     @apply rounded-2xl border transition-all duration-300;
-    background: rgba(30, 22, 53, 0.95);
-    border-color: rgba(45, 32, 96, 0.80);
+    background: rgba(28, 31, 10, 0.95);
+    border-color: rgba(53, 61, 24, 0.80);
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   }
   .card-dark:hover {
-    border-color: rgba(124, 58, 237, 0.60);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(124,58,237,0.15);
+    border-color: rgba(95, 111, 46, 0.55);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(95,111,46,0.12);
   }
 
   /* ── Glass ── */
@@ -84,64 +79,55 @@
     border: 1px solid rgba(255, 255, 255, 0.14);
   }
   .glass-dark {
-    background: rgba(15, 10, 30, 0.70);
+    background: rgba(21, 21, 8, 0.70);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(124, 58, 237, 0.25);
+    border: 1px solid rgba(95, 111, 46, 0.25);
   }
 
-  /* ── Inputs ── */
+  /* ── Inputs (customer light) ── */
   .input-venus {
-    @apply w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-venus-400 focus:border-venus-400;
+    @apply w-full px-4 py-3 border border-stone-200 rounded-xl bg-white text-gray-900 placeholder-stone-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:border-venus-500;
+    --tw-ring-color: rgba(122, 142, 59, 0.40);
   }
-  .label-venus {
-    @apply block text-sm font-semibold text-gray-700 mb-1.5;
+  .label-venus { @apply block text-sm font-semibold text-stone-700 mb-1.5; }
+
+  /* ── Inputs (admin dark) ── */
+  .input-dark {
+    @apply w-full px-4 py-3 rounded-xl text-amber-50 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2;
+    background: rgba(10, 10, 3, 0.80);
+    border: 1px solid rgba(53, 61, 24, 0.80);
+    --tw-ring-color: rgba(95, 111, 46, 0.50);
+  }
+  .input-dark:focus { border-color: #5F6F2E; }
+  .input-dark option { background: #1C1F0A; color: #D4D9A3; }
+  .input-dark::placeholder { color: rgba(154,173,85,0.40); }
+
+  .label-dark  { @apply block text-xs font-bold uppercase tracking-wider mb-2; color: #9BAD55; }
+  .section-dark {
+    @apply rounded-2xl p-6 mb-5;
+    background: rgba(28, 31, 10, 0.95);
+    border: 1px solid rgba(53, 61, 24, 0.80);
   }
 
-  /* ── Admin sidebar active ── */
-  .nav-item-active {
-    color: #A78BFA;
-    background: rgba(124, 58, 237, 0.18);
-    border-left: 3px solid #7C3AED;
-    box-shadow: 4px 0 20px rgba(124,58,237,0.10);
-  }
+  /* ── Admin nav ── */
   .nav-item {
     @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer;
-    color: rgba(196, 181, 253, 0.70);
+    color: rgba(186, 200, 118, 0.65);
     border-left: 3px solid transparent;
   }
   .nav-item:hover {
-    color: #C4B5FD;
-    background: rgba(124, 58, 237, 0.10);
+    color: #BAC876;
+    background: rgba(95, 111, 46, 0.12);
+  }
+  .nav-item-active {
+    color: #BAC876;
+    background: rgba(95, 111, 46, 0.20);
+    border-left: 3px solid #5F6F2E;
+    box-shadow: 4px 0 20px rgba(95,111,46,0.10);
   }
 
-  /* ── Dark admin inputs ── */
-  .input-dark {
-    @apply w-full px-4 py-3 rounded-xl text-white text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-venus-500;
-    background: rgba(12, 8, 24, 0.80);
-    border: 1px solid rgba(45, 32, 96, 0.80);
-  }
-  .input-dark:focus {
-    border-color: #7C3AED;
-  }
-  .input-dark option {
-    background: #1A1030;
-    color: #E9D5FF;
-  }
-  .input-dark::placeholder {
-    color: rgba(167, 139, 250, 0.40);
-  }
-
-  .label-dark {
-    @apply block text-xs font-bold uppercase tracking-wider text-violet-400 mb-2;
-  }
-
-  .section-dark {
-    @apply rounded-2xl p-6 mb-5;
-    background: rgba(30, 22, 53, 0.95);
-    border: 1px solid rgba(45, 32, 96, 0.80);
-  }
-
+  /* ── Toggle ── */
   .toggle-venus {
     @apply relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none;
   }

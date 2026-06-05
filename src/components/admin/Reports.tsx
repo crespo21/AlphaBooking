@@ -27,7 +27,7 @@ const serviceDistribution = [
   { name: 'Beard Trim',       value: 15 },
 ];
 
-const VENUS_COLORS = ['#8B5CF6', '#EC4899', '#FBBF24', '#06B6D4'];
+const VENUS_COLORS = ['#7A8E3B', '#B5944A', '#C9AF6B', '#06B6D4'];
 
 const kpis = [
   { label: 'Total Revenue',     value: '$28,550', change: '+12%', up: true  },
@@ -38,7 +38,7 @@ const kpis = [
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl p-3 text-sm" style={{ background: '#1A1030', border: '1px solid rgba(124,58,237,0.40)', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}>
+    <div className="rounded-xl p-3 text-sm" style={{ background: '#1C1F0A', border: '1px solid rgba(95,111,46,0.40)', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}>
       <p className="font-bold text-white mb-2">{label}</p>
       {payload.map((p: any) => (
         <p key={p.name} style={{ color: p.color }} className="font-medium">
@@ -62,7 +62,7 @@ export const Reports: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-black text-white mb-1">Reports</h1>
-          <p className="text-violet-400 text-sm">Business performance at a glance.</p>
+          <p className="text-venus-400 text-sm">Business performance at a glance.</p>
         </div>
         <button className="btn-venus text-sm">
           <DownloadIcon className="w-4 h-4" />
@@ -101,8 +101,8 @@ export const Reports: React.FC = () => {
             <option value="staff-3">Jordan Taylor</option>
           </select>
         </div>
-        <button className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-semibold text-violet-300 transition-colors hover:text-white"
-          style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.30)' }}>
+        <button className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-semibold text-venus-300 transition-colors hover:text-white"
+          style={{ background: 'rgba(95,111,46,0.15)', border: '1px solid rgba(95,111,46,0.30)' }}>
           <FilterIcon className="w-4 h-4" />
           Apply
         </button>
@@ -112,7 +112,7 @@ export const Reports: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {kpis.map(({ label, value, change, up }) => (
           <div key={label} className="card-dark p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-violet-400 mb-2">{label}</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-venus-400 mb-2">{label}</p>
             <p className="text-3xl font-black text-white mb-1">{value}</p>
             <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: up ? '#4ADE80' : '#F87171' }}>
               {up ? <TrendingUpIcon className="w-3.5 h-3.5" /> : <TrendingDownIcon className="w-3.5 h-3.5" />}
@@ -128,13 +128,13 @@ export const Reports: React.FC = () => {
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={revenueData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(124,58,237,0.12)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(95,111,46,0.12)" />
               <XAxis dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} />
               <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ color: '#A78BFA', fontSize: '11px', fontWeight: 600 }} />
-              <Bar dataKey="revenue"   fill="#8B5CF6" name="Revenue ($)" radius={[4,4,0,0]} />
-              <Bar dataKey="cancelled" fill="#EC4899" name="Cancelled ($)" radius={[4,4,0,0]} />
+              <Legend wrapperStyle={{ color: '#9BAD55', fontSize: '11px', fontWeight: 600 }} />
+              <Bar dataKey="revenue"   fill="#7A8E3B" name="Revenue ($)" radius={[4,4,0,0]} />
+              <Bar dataKey="cancelled" fill="#B5944A" name="Cancelled ($)" radius={[4,4,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -147,14 +147,14 @@ export const Reports: React.FC = () => {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={staffPerf} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(124,58,237,0.12)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(95,111,46,0.12)" />
                 <XAxis dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} />
                 <YAxis yAxisId="l" orientation="left"  tick={axisStyle} axisLine={false} tickLine={false} />
                 <YAxis yAxisId="r" orientation="right" tick={axisStyle} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Legend wrapperStyle={{ color: '#A78BFA', fontSize: '11px', fontWeight: 600 }} />
-                <Line yAxisId="l" type="monotone" dataKey="appointments" stroke="#8B5CF6" name="Appointments" strokeWidth={2} dot={{ fill: '#8B5CF6', r: 4 }} />
-                <Line yAxisId="r" type="monotone" dataKey="revenue" stroke="#FBBF24" name="Revenue ($)" strokeWidth={2} dot={{ fill: '#FBBF24', r: 4 }} />
+                <Legend wrapperStyle={{ color: '#9BAD55', fontSize: '11px', fontWeight: 600 }} />
+                <Line yAxisId="l" type="monotone" dataKey="appointments" stroke="#7A8E3B" name="Appointments" strokeWidth={2} dot={{ fill: '#7A8E3B', r: 4 }} />
+                <Line yAxisId="r" type="monotone" dataKey="revenue" stroke="#C9AF6B" name="Revenue ($)" strokeWidth={2} dot={{ fill: '#C9AF6B', r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -167,13 +167,13 @@ export const Reports: React.FC = () => {
               <PieChart>
                 <Pie data={serviceDistribution} cx="50%" cy="50%" outerRadius={85} dataKey="value"
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  labelLine={{ stroke: 'rgba(167,139,250,0.40)' }}>
+                  labelLine={{ stroke: 'rgba(154,173,85,0.40)' }}>
                   {serviceDistribution.map((_, i) => (
                     <Cell key={i} fill={VENUS_COLORS[i % VENUS_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
-                <Legend wrapperStyle={{ color: '#A78BFA', fontSize: '11px', fontWeight: 600 }} />
+                <Legend wrapperStyle={{ color: '#9BAD55', fontSize: '11px', fontWeight: 600 }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -188,7 +188,7 @@ export const Reports: React.FC = () => {
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 {['Month', 'Appointments', 'Revenue', 'Avg/Day', 'Cancelled', 'Growth'].map((h) => (
-                  <th key={h} className="pb-3 px-3 text-left text-xs font-bold uppercase tracking-wider text-violet-400">{h}</th>
+                  <th key={h} className="pb-3 px-3 text-left text-xs font-bold uppercase tracking-wider text-venus-400">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -200,10 +200,10 @@ export const Reports: React.FC = () => {
                   <tr key={m.name} className="transition-colors hover:bg-white/[0.03]"
                     style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <td className="py-3 px-3 font-bold text-white">{m.name}</td>
-                    <td className="py-3 px-3 text-violet-300">{Math.floor(m.revenue / 100)}</td>
-                    <td className="py-3 px-3 font-semibold" style={{ color: '#FBBF24' }}>${m.revenue.toLocaleString()}</td>
-                    <td className="py-3 px-3 text-violet-300">${Math.floor(m.revenue / 30)}</td>
-                    <td className="py-3 px-3 text-violet-400">${m.cancelled}</td>
+                    <td className="py-3 px-3 text-venus-300">{Math.floor(m.revenue / 100)}</td>
+                    <td className="py-3 px-3 font-semibold" style={{ color: '#C9AF6B' }}>${m.revenue.toLocaleString()}</td>
+                    <td className="py-3 px-3 text-venus-300">${Math.floor(m.revenue / 30)}</td>
+                    <td className="py-3 px-3 text-venus-400">${m.cancelled}</td>
                     <td className="py-3 px-3">
                       <span className="px-2.5 py-1 rounded-full text-xs font-bold"
                         style={isUp

@@ -98,7 +98,7 @@ export const CalendarView: React.FC = () => {
                         ? 'text-gray-800 hover:bg-venus-50 hover:text-venus-700 cursor-pointer'
                         : 'text-gray-300 cursor-not-allowed bg-gray-50'
                     }`}
-                    style={isSelected ? { background: 'linear-gradient(135deg, #7C3AED, #5B21B6)' } : {}}
+                    style={isSelected ? { background: 'linear-gradient(135deg, #5F6F2E, #3D4A1B)' } : {}}
                   >
                     {format(day, 'd')}
                   </button>
